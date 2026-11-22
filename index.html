@@ -29,11 +29,11 @@
         }
     </script>
 
-    <!-- Lucide Icons, Chart.js, html2pdf.js & qrcodejs (Dynamic QR Generator) -->
+    <!-- Lucide Icons, Chart.js, html2pdf.js & QRious -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -492,7 +492,7 @@
         </div>
     </div>
 
-    <!-- MODAL SIGNATURE DIGITAL (QR) -->
+    <!-- MODAL SIGNATURE DIGITAL (QR) DENGAN UPLOAD GAMBAR & NAMA -->
     <div id="modalSignatureQR" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4 overflow-y-auto">
         <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl text-xs space-y-4 my-auto">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3">
@@ -502,6 +502,13 @@
                 <button onclick="closeQRSignatureModal()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
             <div class="space-y-3">
+                <div>
+                    <label class="font-semibold block mb-1 text-slate-300">Unggah Gambar QR Code (JPG / PNG)</label>
+                    <input type="file" id="qrImageFileInput" accept="image/jpeg, image/png, image/jpg" onchange="handleQRImageUpload(event)" class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2 text-slate-300 file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-violet-600 file:text-white hover:file:bg-violet-700 cursor-pointer">
+                    <div id="qrUploadPreviewBox" class="hidden mt-2 flex justify-center bg-white p-2 rounded-xl border border-slate-700 w-24 mx-auto">
+                        <img id="qrUploadPreviewImg" src="" alt="Preview QR" class="w-20 h-20 object-contain">
+                    </div>
+                </div>
                 <div>
                     <label class="font-semibold block mb-1 text-slate-300">Nama Lengkap</label>
                     <input type="text" id="qrSignerName" placeholder="Nama lengkap..." class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white">
@@ -690,7 +697,7 @@
 
     <!-- SCRIPT LOGIC LENGKAP -->
     <script>
-        const DB_KEY = 'MYJADWAL_DATA_V19';
+        const DB_KEY = 'MYJADWAL_DATA_V20';
         let appState = {
             currentUser: null,
             savedAccounts: [],
@@ -708,6 +715,7 @@
         let tempPhotoData = null;
         let tempVideoData = null;
         let tempVideoName = null;
+        let tempQRSignatureData = null;
 
         let canvas, ctx, isDrawing = false;
         let mediaStream = null;
@@ -818,11 +826,30 @@
             downloadDirectPDF(targetId);
         }
 
+        function handleQRImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) {
+                tempQRSignatureData = null;
+                document.getElementById('qrUploadPreviewBox').classList.add('hidden');
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                tempQRSignatureData = e.target.result;
+                document.getElementById('qrUploadPreviewImg').src = tempQRSignatureData;
+                document.getElementById('qrUploadPreviewBox').classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        }
+
         function chooseSignQR() {
             document.getElementById('modalSelectSignType').classList.add('hidden');
             document.getElementById('qrSignerName').value = appState.currentUser ? appState.currentUser.name : '';
             document.getElementById('qrSignerID').value = '';
             document.getElementById('qrConsentCheck').checked = false;
+            document.getElementById('qrImageFileInput').value = '';
+            document.getElementById('qrUploadPreviewBox').classList.add('hidden');
+            tempQRSignatureData = null;
             document.getElementById('modalSignatureQR').classList.remove('hidden');
         }
 
@@ -835,8 +862,12 @@
             const phoneId = document.getElementById('qrSignerID').value.trim();
             const consented = document.getElementById('qrConsentCheck').checked;
 
+            if (!tempQRSignatureData) {
+                showToast("Mohon unggah gambar QR Code (JPG/PNG) terlebih dahulu!", "error");
+                return;
+            }
             if (!name || !phoneId) {
-                showToast("Mohon lengkapi Nama dan ID / No. HP!", "error");
+                showToast("Mohon lengkapi Nama Lengkap dan ID!", "error");
                 return;
             }
             if (!consented) {
@@ -850,15 +881,21 @@
                 notul.signType = 'qr';
                 notul.signerName = name;
                 notul.signerID = phoneId;
-                // Format interaktif QR saat di-scan/klik: Memunculkan konfirmasi verifikasi dokumen
-                notul.qrUniqueData = `javascript:if(confirm('Lihat Dokumen/verifikasi dokumen?')){alert('Dokumen terverifikasi');}`;
+                notul.qrImageData = tempQRSignatureData;
                 saveState();
             }
             closeQRSignatureModal();
             downloadDirectPDF(targetId);
         }
 
-        // --- UNDUH PDF DENGAN FORMAT TATA LETAK, POSISI KIRI DI BAWAH, & QR FIX ---
+        function getFormattedSignDate() {
+            const now = new Date();
+            const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+            const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+            return `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+        }
+
+        // --- FUNGSI UNDUH PDF ---
         function downloadDirectPDF(id) {
             const notul = appState.notulensi.find(n => n.id === id);
             if (!notul) return;
@@ -872,40 +909,38 @@
             pdfContent.style.backgroundColor = '#ffffff';
             pdfContent.style.lineHeight = '1.6';
 
+            const formattedDateStr = getFormattedSignDate();
             let signatureAreaHtml = '';
+
             if (notul.signType === 'manual') {
                 signatureAreaHtml = `
-                    <div style="margin-top: 45px; display: flex; justify-content: space-between; align-items: flex-end;">
-                        <div style="text-align: left; width: 280px;">
-                            <p style="margin: 0; font-size: 11px; font-style: italic; color: #555;">Dokumen ini asli dan tertanda tangani secara basah</p>
-                        </div>
-                        <div style="text-align: center; width: 230px;">
-                            <p style="margin: 5px 0 0; font-size: 12px;">Disahkan oleh,</p>
-                            ${notul.signature ? `<img src="${notul.signature}" style="height: 65px; object-fit: contain; margin: 5px auto; display: block;" />` : '<div style="height: 65px;"></div>'}
-                            <p style="margin: 0; font-size: 13px; font-weight: bold; border-top: 1px solid #111; padding-top: 4px;">${notul.signerName || 'Peserta / Notulis'}</p>
-                        </div>
-                    </div>
-                `;
-            } else if (notul.signType === 'qr') {
-                signatureAreaHtml = `
-                    <div style="margin-top: 45px; display: flex; justify-content: space-between; align-items: flex-end;">
-                        <div style="text-align: left; width: 280px;">
-                            <p style="margin: 0; font-size: 11px; font-style: italic; color: #555;">Dokumen ini asli dan tertanda tangani secara elektronik</p>
-                        </div>
+                    <div style="margin-top: 45px; display: flex; justify-content: flex-end;">
                         <div style="text-align: center; width: 240px;">
-                            <p style="margin: 5px 0 0; font-size: 12px;">Disahkan oleh,</p>
-                            <div id="pdfQrContainer" style="margin: 8px auto; display: inline-block; padding: 6px; background: #fff; border: 1px solid #ddd; border-radius: 4px;"></div>
-                            <p style="margin: 2px 0 0; font-size: 13px; font-weight: bold;">${notul.signerName || 'Nama Lengkap'}</p>
+                            <p style="margin: 0; font-size: 12px;">${formattedDateStr}</p>
+                            <p style="margin: 2px 0 0; font-size: 12px;">Disahkan oleh,</p>
+                            <div style="margin: 8px auto; height: 75px; display: flex; align-items: center; justify-content: center;">
+                                ${notul.signature ? `<img src="${notul.signature}" style="max-height: 75px; max-width: 190px;" />` : ''}
+                            </div>
+                            <p style="margin: 2px 0 0; font-size: 13px; font-weight: bold; text-decoration: underline;">${notul.signerName || 'Penanda Tangan'}</p>
                         </div>
                     </div>
                 `;
             } else {
+                const signerDisplayName = notul.signerName || 'Penanda Tangan';
+                const qrImageSrc = notul.qrImageData || '';
+
                 signatureAreaHtml = `
-                    <div style="margin-top: 45px; display: flex; justify-content: flex-end;">
-                        <div style="text-align: center; width: 220px;">
-                            <p style="margin: 0; font-size: 12px;">Disahkan oleh,</p>
-                            <div style="height: 65px;"></div>
-                            <p style="margin: 0; font-size: 13px; font-weight: bold; border-top: 1px solid #111; padding-top: 5px;">(Peserta / Notulis)</p>
+                    <div style="margin-top: 45px; display: flex; justify-content: space-between; align-items: flex-end;">
+                        <div style="text-align: left; width: 280px;">
+                            <p style="margin: 0; font-size: 11px; font-style: italic; color: #555;">Dokumen ini sah dan ditandatangani secara digital oleh ${signerDisplayName}</p>
+                        </div>
+                        <div style="text-align: center; width: 240px;">
+                            <p style="margin: 0; font-size: 12px;">${formattedDateStr}</p>
+                            <p style="margin: 2px 0 0; font-size: 12px;">Disahkan oleh,</p>
+                            <div style="margin: 8px auto; display: inline-block; padding: 6px; background: #fff; border: 1px solid #ddd; border-radius: 4px;">
+                                <img src="${qrImageSrc}" style="width: 85px; height: 85px; display: block; object-fit: contain;" />
+                            </div>
+                            <p style="margin: 2px 0 0; font-size: 13px; font-weight: bold;">${signerDisplayName}</p>
                         </div>
                     </div>
                 `;
@@ -945,44 +980,7 @@
                 ${signatureAreaHtml}
             `;
 
-            // Render QR Code dengan memastikan kontainer terpasang di DOM dokumen agar pustaka qrcodejs berhasil melukis canvas/image
-            if (notul.signType === 'qr' && notul.qrUniqueData) {
-                const tempDiv = document.createElement('div');
-                tempDiv.style.position = 'absolute';
-                tempDiv.style.left = '-9999px';
-                document.body.appendChild(tempDiv);
-                
-                new QRCode(tempDiv, {
-                    text: notul.qrUniqueData,
-                    width: 80,
-                    height: 80,
-                    colorDark : "#000000",
-                    colorLight : "#ffffff",
-                    correctLevel : QRCode.CorrectLevel.H
-                });
-
-                setTimeout(() => {
-                    const canvasEl = tempDiv.querySelector('canvas');
-                    const imgEl = tempDiv.querySelector('img');
-                    let qrImgUrl = '';
-                    if (canvasEl) {
-                        qrImgUrl = canvasEl.toDataURL("image/png");
-                    } else if (imgEl) {
-                        qrImgUrl = imgEl.src;
-                    }
-
-                    if (qrImgUrl) {
-                        const container = pdfContent.querySelector('#pdfQrContainer');
-                        if (container) {
-                            container.innerHTML = `<img src="${qrImgUrl}" style="width: 75px; height: 75px; display: block;" />`;
-                        }
-                    }
-                    tempDiv.remove();
-                    processPdfExport(pdfContent, notul.judul);
-                }, 250);
-            } else {
-                processPdfExport(pdfContent, notul.judul);
-            }
+            processPdfExport(pdfContent, notul.judul);
         }
 
         function processPdfExport(pdfContent, judulRapat) {
@@ -1007,7 +1005,6 @@
             }
         }
 
-        // --- REAL-TIME CAMERA & VIDEO STREAM ---
         async function openLiveCameraModal() {
             document.getElementById('modalLiveCamera').classList.remove('hidden');
             const videoEl = document.getElementById('liveVideoElement');
@@ -1116,7 +1113,7 @@
         }
 
         function loadState() {
-            const possibleKeys = [DB_KEY, 'MYJADWAL_DATA_V18', 'MYJADWAL_DATA_V17', 'MYJADWAL_DATA_V16'];
+            const possibleKeys = [DB_KEY, 'MYJADWAL_DATA_V19', 'MYJADWAL_DATA_V18', 'MYJADWAL_DATA_V17'];
             let loadedData = null;
             for (const key of possibleKeys) {
                 const saved = localStorage.getItem(key);
@@ -1141,7 +1138,6 @@
             try { localStorage.setItem(DB_KEY, JSON.stringify(appState)); } catch (e) { showToast("Penyimpanan lokal penuh!", "error"); }
         }
 
-        // --- AGENDA CRUD ---
         function openAgendaModal(editId = null) {
             const form = document.querySelector('#modalAgenda form');
             if(form) form.reset();
@@ -1204,7 +1200,6 @@
             }
         }
 
-        // --- TUGAS CRUD ---
         function openTugasModal(editId = null) {
             const form = document.querySelector('#modalTugas form');
             if(form) form.reset();
@@ -1264,7 +1259,6 @@
             }
         }
 
-        // --- NOTULENSI CRUD ---
         function openNotulensiModal(editId = null) {
             const form = document.querySelector('#modalNotulensi form');
             if (form) form.reset();
@@ -1312,7 +1306,7 @@
             } else {
                 appState.notulensi.push({ 
                     id: 'NOT-' + Date.now(), judul, tanggal, pembahasan, 
-                    signType: null, signature: null, signerName: '', signerID: '', qrUniqueData: '',
+                    signType: null, signature: null, signerName: '', signerID: '', qrImageData: null,
                     photoData: tempPhotoData, videoData: tempVideoData, videoName: tempVideoName
                 });
                 showToast("Notulensi dibuat!", "success");
@@ -1324,7 +1318,6 @@
             saveState(); renderAll(); showToast("Notulensi dihapus.", "info");
         }
 
-        // --- JADWAL KULIAH CRUD ---
         function openJadwalModal(editId = null) {
             const form = document.querySelector('#modalJadwal form');
             if(form) form.reset();
@@ -1371,7 +1364,6 @@
             saveState(); renderAll(); showToast("Jadwal dihapus", "info");
         }
 
-        // --- KEUANGAN CRUD ---
         function openFinanceModal() { document.getElementById('modalFinance').classList.remove('hidden'); }
         function closeFinanceModal() { document.getElementById('modalFinance').classList.add('hidden'); }
         function saveFinance(e) {
@@ -1390,7 +1382,6 @@
             saveState(); renderAll(); showToast("Transaksi dihapus", "info");
         }
 
-        // --- RENDER FUNCTIONS ---
         function renderAll() {
             renderDashboard();
             renderAgendaGrid();
@@ -1632,7 +1623,6 @@
             renderCalendarWidget(); renderFullCalendar();
         }
 
-        // --- AUTH & SYSTEM ---
         function toggleAppTheme() {
             appState.settings.themeMode = (appState.settings.themeMode === 'dark') ? 'light' : 'dark';
             saveState(); applyTheme();
