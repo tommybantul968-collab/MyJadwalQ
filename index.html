@@ -348,7 +348,7 @@
                 <div class="flex justify-between items-center flex-wrap gap-4">
                     <div>
                         <h2 class="text-xl font-extrabold text-white">Notulensi Rapat & Diskusi</h2>
-                        <p class="text-xs text-slate-400">Catat rapat, pilih jenis tanda tangan (Manual/QR), & unduh langsung file PDF.</p>
+                        <p class="text-xs text-slate-400">Catat rapat, pilih jenis tanda tangan (Manual/QR), & unduh dokumen.</p>
                     </div>
                     <button onclick="openNotulensiModal()" class="owner-only-btn bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-bold text-xs px-4 py-2.5 rounded-xl flex items-center gap-2 shadow-md">
                         <i data-lucide="plus" class="w-4 h-4"></i> Buat Notulensi
@@ -438,6 +438,61 @@
                         </button>
                     </div>
 
+                    <!-- FITUR NOTIFIKASI & PANEL LAPORAN AUDIT -->
+                    <div class="space-y-4 pb-6 border-b border-slate-800">
+                        <div class="flex items-center justify-between flex-wrap gap-4">
+                            <div>
+                                <h4 class="text-sm font-bold text-white flex items-center gap-2">
+                                    <i data-lucide="bell" class="w-4 h-4 text-amber-400"></i> Pengaturan & Log Notifikasi
+                                </h4>
+                                <p class="text-xs text-slate-400">Kelola izin sistem pengingat otomatis dan tinjau status riwayat audit notifikasi.</p>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button onclick="toggleNotificationsFeature()" id="notifToggleBtn" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow-md">
+                                    <span id="notifBtnText">Aktifkan Notifikasi</span>
+                                </button>
+                                <button onclick="triggerAuditNotification()" class="bg-violet-600 hover:bg-violet-700 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl transition shadow-md flex items-center gap-1.5">
+                                    <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Tes Audit
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Bagian Laporan Audit Notifikasi -->
+                        <div class="bg-[#131d38] p-4 rounded-2xl border border-slate-700/80 space-y-3">
+                            <div class="flex items-center justify-between border-b border-slate-700 pb-2">
+                                <span class="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center gap-1.5">
+                                    <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i> Laporan Audit Status Notifikasi
+                                </span>
+                                <span id="auditTimestamp" class="text-[10px] font-mono text-slate-400">Terakhir diperiksa: Baru saja</span>
+                            </div>
+
+                            <div class="grid grid-cols-3 gap-2 text-center py-1">
+                                <div class="bg-[#0f172a] p-2.5 rounded-xl border border-slate-700/50">
+                                    <span class="text-[9px] uppercase font-bold text-slate-400 block">Total Kirim</span>
+                                    <span id="auditTotalSent" class="text-sm font-black text-white">0</span>
+                                </div>
+                                <div class="bg-[#0f172a] p-2.5 rounded-xl border border-slate-700/50">
+                                    <span class="text-[9px] uppercase font-bold text-slate-400 block">Berhasil</span>
+                                    <span id="auditTotalSuccess" class="text-sm font-black text-emerald-400">0</span>
+                                </div>
+                                <div class="bg-[#0f172a] p-2.5 rounded-xl border border-slate-700/50">
+                                    <span class="text-[9px] uppercase font-bold text-slate-400 block">Gagal / Tertahan</span>
+                                    <span id="auditTotalFailed" class="text-sm font-black text-rose-400">0</span>
+                                </div>
+                            </div>
+
+                            <div class="space-y-1.5">
+                                <div class="flex justify-between text-[11px] text-slate-400 font-medium">
+                                    <span>Log Riwayat Pengiriman Terakhir:</span>
+                                    <button onclick="clearNotificationLogs()" class="text-rose-400 hover:underline">Bersihkan Log</button>
+                                </div>
+                                <div id="notificationAuditLogsList" class="space-y-1.5 max-h-36 overflow-y-auto custom-scrollbar text-[11px] font-mono">
+                                    <div class="p-2 bg-[#0f172a] rounded-xl text-slate-400 text-center">Belum ada riwayat log notifikasi tercatat.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="space-y-3 pb-6 border-b border-slate-800">
                         <h4 class="text-sm font-bold text-white">Cadangan & Pemulihan Data (JSON)</h4>
                         <div class="flex gap-3 flex-wrap">
@@ -492,12 +547,12 @@
         </div>
     </div>
 
-    <!-- MODAL SIGNATURE DIGITAL (QR) DENGAN UPLOAD GAMBAR & NAMA -->
+    <!-- MODAL SIGNATURE DIGITAL (QR) -->
     <div id="modalSignatureQR" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4 overflow-y-auto">
         <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl text-xs space-y-4 my-auto">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3">
                 <h3 class="text-sm font-bold text-white flex items-center gap-2">
-                    <i data-lucide="qr-code" class="w-4 h-4 text-violet-400"></i> Tanda Tangan Elektronik (QR)
+                    <i data-lucide="qr-code" class="w-4 h-4 text-violet-400"></i> Tanda Tangan Elektronik (QR) & Unduh Dokumen
                 </h3>
                 <button onclick="closeQRSignatureModal()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
@@ -521,10 +576,20 @@
                     <input type="checkbox" id="qrConsentCheck" class="w-4 h-4 rounded bg-[#131d38] border-slate-700 text-violet-600">
                     <label for="qrConsentCheck" class="text-slate-300 text-[11px]">Saya menyetujui validitas tanda tangan elektronik ini secara sah.</label>
                 </div>
+                <div class="pt-2">
+                    <label class="font-semibold block mb-1.5 text-slate-300">Pilih Format Unduhan:</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button type="button" onclick="confirmQRSignatureAndDownload('pdf')" class="py-2.5 px-3 rounded-xl bg-violet-600 hover:bg-violet-700 text-white font-bold flex items-center justify-center gap-1.5 shadow-md">
+                            <i data-lucide="file-down" class="w-4 h-4"></i> Unduh PDF
+                        </button>
+                        <button type="button" onclick="confirmQRSignatureAndDownload('word')" class="py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold flex items-center justify-center gap-1.5 shadow-md">
+                            <i data-lucide="file-text" class="w-4 h-4"></i> Unduh Word (.doc)
+                        </button>
+                    </div>
+                </div>
             </div>
-            <div class="flex justify-end gap-2 pt-3 border-t border-slate-800">
-                <button type="button" onclick="closeQRSignatureModal()" class="px-3 py-2 rounded-xl border border-slate-700 text-slate-300">Batal</button>
-                <button type="button" onclick="confirmQRSignatureAndDownload()" class="px-4 py-2 rounded-xl bg-violet-600 hover:bg-violet-700 text-white font-bold">Unduh PDF (Elektronik)</button>
+            <div class="flex justify-end pt-2 border-t border-slate-800">
+                <button type="button" onclick="closeQRSignatureModal()" class="px-3 py-1.5 rounded-xl border border-slate-700 text-slate-300">Batal</button>
             </div>
         </div>
     </div>
@@ -610,7 +675,7 @@
         </div>
     </div>
 
-    <!-- MODAL AGENDA -->
+    <!-- MODAL AGENDA (DENGAN INPUT FILE PDF/JPG MAKSIMAL 3MB) -->
     <div id="modalAgenda" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
         <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl text-xs space-y-4 my-auto max-h-[90vh] overflow-y-auto custom-scrollbar">
             <h3 id="agendaModalHeader" class="text-base font-bold text-white mb-2">Tambah / Edit Agenda</h3>
@@ -627,8 +692,31 @@
                     <div><label class="font-semibold block mb-1 text-slate-300">Jam</label><input type="time" id="agendaJam" required class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white"></div>
                     <div><label class="font-semibold block mb-1 text-slate-300">Durasi (Jam)</label><input type="number" id="agendaDurasi" step="any" min="0" class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white"></div>
                 </div>
+                <div>
+                    <label class="font-semibold block mb-1 text-slate-300">Lampiran File (PDF / JPG / PNG - Maks. 3MB)</label>
+                    <input type="file" id="agendaFile" accept=".pdf,image/jpeg,image/png,image/jpg" onchange="handleAgendaFileUpload(event)" class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2 text-slate-300 file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-pink-600 file:text-white hover:file:bg-pink-700 cursor-pointer">
+                    <p id="agendaFileError" class="text-[10px] text-rose-400 mt-1 hidden"></p>
+                </div>
                 <div class="flex justify-end gap-2 pt-3"><button type="button" onclick="closeAgendaModal()" class="px-4 py-2 rounded-xl border border-slate-700 text-slate-300">Batal</button><button type="submit" class="px-4 py-2 rounded-xl bg-pink-600 text-white font-bold">Simpan</button></div>
             </form>
+        </div>
+    </div>
+
+    <!-- MODAL PRATINJAU FILE AGENDA -->
+    <div id="modalAgendaFilePreview" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-2xl w-full p-5 sm:p-6 shadow-2xl text-xs space-y-4 my-auto">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <h3 id="previewFileTitle" class="text-sm font-bold text-white flex items-center gap-2">
+                    <i data-lucide="file-text" class="w-4 h-4 text-pink-400"></i> Pratinjau Lampiran Agenda
+                </h3>
+                <button onclick="closeAgendaFilePreview()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div id="previewFileContainer" class="bg-black/40 rounded-2xl p-3 border border-slate-700 flex items-center justify-center min-h-[300px] max-h-[60vh] overflow-auto">
+                <!-- Konten dinamis untuk gambar atau PDF -->
+            </div>
+            <div class="flex justify-end gap-2 pt-2 border-t border-slate-800">
+                <button onclick="closeAgendaFilePreview()" class="px-4 py-2 rounded-xl border border-slate-700 text-slate-300">Tutup</button>
+            </div>
         </div>
     </div>
 
@@ -661,7 +749,7 @@
                 <div><label class="font-semibold block mb-1 text-slate-300">Mata Kuliah</label><input type="text" id="jadwalMatkul" required class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white"></div>
                 <div class="grid grid-cols-2 gap-3">
                     <div><label class="font-semibold block mb-1 text-slate-300">Ruangan</label><input type="text" id="jadwalRuang" required class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white"></div>
-                    <div><label class="font-semibold block mb-1 text-slate-300">Jam</label><input type="text" id="jadwalJam" required placeholder="07.30 - 09.00" class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white"></div>
+                    <div><label class="font-semibold block mb-1 text-slate-300">Jam (Format: 07.30 - 09.00)</label><input type="text" id="jadwalJam" required placeholder="07.30 - 09.00" class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white"></div>
                 </div>
                 <div><label class="font-semibold block mb-1 text-slate-300">Dosen Pengampu</label><input type="text" id="jadwalDosen" required class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white"></div>
                 <div class="flex justify-end gap-2 pt-3"><button type="button" onclick="closeJadwalModal()" class="px-4 py-2 rounded-xl border border-slate-700 text-slate-300">Batal</button><button type="submit" class="px-4 py-2 rounded-xl bg-cyan-600 text-white font-bold">Simpan</button></div>
@@ -695,9 +783,9 @@
         </div>
     </div>
 
-    <!-- SCRIPT LOGIC LENGKAP -->
+    <!-- SCRIPT LOGIC (DENGAN PENAMBAHAN FITUR NOTIFIKASI & PANEL LAPORAN AUDIT) -->
     <script>
-        const DB_KEY = 'MYJADWAL_DATA_V20';
+        const DB_KEY = 'MYJADWAL_DATA_V21';
         let appState = {
             currentUser: null,
             savedAccounts: [],
@@ -706,7 +794,8 @@
             notulensi: [],
             finances: [],
             schedules: [],
-            settings: { themeMode: 'dark', notificationsEnabled: false }
+            settings: { themeMode: 'dark', notificationsEnabled: false },
+            notificationLogs: []
         };
 
         let currentCalendarDate = new Date(); 
@@ -716,6 +805,10 @@
         let tempVideoData = null;
         let tempVideoName = null;
         let tempQRSignatureData = null;
+        
+        let tempAgendaFileData = null;
+        let tempAgendaFileName = null;
+        let tempAgendaFileType = null;
 
         let canvas, ctx, isDrawing = false;
         let mediaStream = null;
@@ -726,6 +819,8 @@
             lucide.createIcons();
             loadState();
             applyTheme();
+            updateNotificationSettingsUI();
+            renderNotificationAuditLogs();
             startClock();
             initSignatureCanvas();
 
@@ -790,7 +885,6 @@
             if (ctx && canvas) { ctx.clearRect(0, 0, canvas.width, canvas.height); }
         }
 
-        // --- MANAJEMEN PILIHAN TANDA TANGAN ---
         function promptSelectSignType(id) {
             activeNotulensiIdForPDF = id;
             document.getElementById('modalSelectSignType').classList.remove('hidden');
@@ -857,7 +951,7 @@
             document.getElementById('modalSignatureQR').classList.add('hidden');
         }
 
-        function confirmQRSignatureAndDownload() {
+        function confirmQRSignatureAndDownload(formatType = 'pdf') {
             const name = document.getElementById('qrSignerName').value.trim();
             const phoneId = document.getElementById('qrSignerID').value.trim();
             const consented = document.getElementById('qrConsentCheck').checked;
@@ -885,7 +979,12 @@
                 saveState();
             }
             closeQRSignatureModal();
-            downloadDirectPDF(targetId);
+
+            if (formatType === 'word') {
+                downloadWordDocument(targetId);
+            } else {
+                downloadDirectPDF(targetId);
+            }
         }
 
         function getFormattedSignDate() {
@@ -895,7 +994,6 @@
             return `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
         }
 
-        // --- FUNGSI UNDUH PDF ---
         function downloadDirectPDF(id) {
             const notul = appState.notulensi.find(n => n.id === id);
             if (!notul) return;
@@ -981,6 +1079,79 @@
             `;
 
             processPdfExport(pdfContent, notul.judul);
+        }
+
+        function downloadWordDocument(id) {
+            const notul = appState.notulensi.find(n => n.id === id);
+            if (!notul) return;
+
+            showToast("Memproses & mengunduh file Word...", "info");
+            const formattedDateStr = getFormattedSignDate();
+            let signatureHtml = '';
+
+            if (notul.signType === 'manual') {
+                signatureHtml = `
+                    <br/><br/>
+                    <table style="width: 100%; border: none;">
+                        <tr>
+                            <td style="width: 60%;"></td>
+                            <td style="width: 40%; text-align: center;">
+                                <p style="font-size: 12px; margin: 0;">${formattedDateStr}</p>
+                                <p style="font-size: 12px; margin: 2px 0;">Disahkan oleh,</p>
+                                ${notul.signature ? `<br/><img src="${notul.signature}" width="150" height="60" style="display: block; margin: 0 auto;" /><br/>` : '<br/><br/>'}
+                                <p style="font-size: 13px; font-weight: bold; text-decoration: underline; margin: 0;">${notul.signerName || 'Penanda Tangan'}</p>
+                            </td>
+                        </tr>
+                    </table>
+                `;
+            } else {
+                const signerDisplayName = notul.signerName || 'Penanda Tangan';
+                const qrImageSrc = notul.qrImageData || '';
+                signatureHtml = `
+                    <br/><br/>
+                    <table style="width: 100%; border: none;">
+                        <tr>
+                            <td style="width: 50%; vertical-align: bottom;">
+                                <p style="font-size: 11px; font-style: italic; color: #555;">Dokumen ini sah dan ditandatangani secara digital oleh ${signerDisplayName}</p>
+                            </td>
+                            <td style="width: 50%; text-align: center; vertical-align: bottom;">
+                                <p style="font-size: 12px; margin: 0;">${formattedDateStr}</p>
+                                <p style="font-size: 12px; margin: 2px 0;">Disahkan oleh,</p>
+                                ${qrImageSrc ? `<br/><img src="${qrImageSrc}" width="80" height="80" style="display: block; margin: 0 auto;" /><br/>` : '<br/><br/>'}
+                                <p style="font-size: 13px; font-weight: bold; margin: 0;">${signerDisplayName}</p>
+                            </td>
+                        </tr>
+                    </table>
+                `;
+            }
+
+            const htmlDoc = `
+                <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+                <head><meta charset='utf-8'><title>${notul.judul}</title></head>
+                <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #111;">
+                    <div style="text-align: center; border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 20px;">
+                        <h2 style="margin: 0; text-transform: uppercase;">Notulensi Rapat Resmi</h2>
+                        <p style="margin: 5px 0 0; font-size: 11px; color: #555;">Portal Akademik MyJadwal Workspace</p>
+                    </div>
+                    <p><strong>Judul Rapat:</strong> ${notul.judul}</p>
+                    <p><strong>Tanggal Rapat:</strong> ${notul.tanggal}</p>
+                    <h3 style="background: #f1f5f9; padding: 6px 10px; border-left: 4px solid #4f46e5; margin-top: 20px;">Poin Pembahasan</h3>
+                    <p style="white-space: pre-wrap; text-align: justify;">${notul.pembahasan}</p>
+                    ${signatureHtml}
+                </body>
+                </html>
+            `;
+
+            const blob = new Blob(['\ufeff' + htmlDoc], { type: 'application/msword' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Notulensi_${notul.judul.replace(/[^a-zA-Z0-9]/g, '_')}.doc`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+            showToast("File Word berhasil diunduh!", "success");
         }
 
         function processPdfExport(pdfContent, judulRapat) {
@@ -1113,7 +1284,7 @@
         }
 
         function loadState() {
-            const possibleKeys = [DB_KEY, 'MYJADWAL_DATA_V19', 'MYJADWAL_DATA_V18', 'MYJADWAL_DATA_V17'];
+            const possibleKeys = [DB_KEY, 'MYJADWAL_DATA_V20', 'MYJADWAL_DATA_V19', 'MYJADWAL_DATA_V18'];
             let loadedData = null;
             for (const key of possibleKeys) {
                 const saved = localStorage.getItem(key);
@@ -1129,19 +1300,216 @@
                     notulensi: loadedData.notulensi || appState.notulensi,
                     finances: loadedData.finances || appState.finances,
                     schedules: loadedData.schedules || appState.schedules,
-                    settings: { ...appState.settings, ...(loadedData.settings || {}) }
+                    settings: { ...appState.settings, ...(loadedData.settings || {}) },
+                    notificationLogs: loadedData.notificationLogs || appState.notificationLogs
                 };
             }
         }
 
         function saveState() {
-            try { localStorage.setItem(DB_KEY, JSON.stringify(appState)); } catch (e) { showToast("Penyimpanan lokal penuh!", "error"); }
+            try { 
+                localStorage.setItem(DB_KEY, JSON.stringify(appState)); 
+            } catch (e) { 
+                showToast("Penyimpanan lokal penuh!", "error"); 
+            }
         }
 
+        /* --- FITUR NOTIFIKASI & LOG AUDIT --- */
+        function toggleNotificationsFeature() {
+            appState.settings.notificationsEnabled = !appState.settings.notificationsEnabled;
+            saveState();
+            updateNotificationSettingsUI();
+            
+            const statusText = appState.settings.notificationsEnabled ? "diaktifkan" : "dinonaktifkan";
+            showToast(`Fitur notifikasi berhasil ${statusText}.`, "success");
+            
+            // Catat log audit perubahan pengaturan
+            logNotificationEvent("SETTINGS_UPDATE", `Notifikasi sistem ${statusText}`, appState.settings.notificationsEnabled ? "SUCCESS" : "WARNING");
+        }
+
+        function updateNotificationSettingsUI() {
+            const btn = document.getElementById('notifToggleBtn');
+            const txt = document.getElementById('notifBtnText');
+            if (!btn || !txt) return;
+
+            if (appState.settings.notificationsEnabled) {
+                btn.className = "bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow-md";
+                txt.innerText = "Nonaktifkan Notifikasi";
+            } else {
+                btn.className = "bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow-md";
+                txt.innerText = "Aktifkan Notifikasi";
+            }
+            renderNotificationAuditLogs();
+        }
+
+        function triggerAuditNotification() {
+            if (!appState.settings.notificationsEnabled) {
+                showToast("Aktifkan fitur notifikasi terlebih dahulu untuk melakukan tes audit.", "error");
+                logNotificationEvent("AUDIT_TEST", "Percobaan tes audit gagal: Notifikasi nonaktif", "FAILED");
+                return;
+            }
+            showToast("Melakukan pengujian sistem notifikasi dan audit...", "info");
+            logNotificationEvent("AUDIT_TEST", "Audit berkala pengingat agenda & tugas kuliah", "SUCCESS");
+            renderNotificationAuditLogs();
+        }
+
+        function logNotificationEvent(type, description, status) {
+            const now = new Date();
+            const timeString = `${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
+            appState.notificationLogs.unshift({
+                id: 'LOG-' + Date.now(),
+                type,
+                description,
+                status,
+                time: timeString
+            });
+            // Batasi log maksimal 30 item terakhir
+            if (appState.notificationLogs.length > 30) {
+                appState.notificationLogs.pop();
+            }
+            saveState();
+            renderNotificationAuditLogs();
+        }
+
+        function clearNotificationLogs() {
+            if (confirm("Bersihkan seluruh riwayat log laporan audit notifikasi?")) {
+                appState.notificationLogs = [];
+                saveState();
+                renderNotificationAuditLogs();
+                showToast("Log laporan audit dibersihkan.", "info");
+            }
+        }
+
+        function renderNotificationAuditLogs() {
+            const totalSentEl = document.getElementById('auditTotalSent');
+            const totalSuccessEl = document.getElementById('auditTotalSuccess');
+            const totalFailedEl = document.getElementById('auditTotalFailed');
+            const listEl = document.getElementById('notificationAuditLogsList');
+            const timestampEl = document.getElementById('auditTimestamp');
+
+            if (!listEl) return;
+
+            const logs = appState.notificationLogs || [];
+            const total = logs.length;
+            const successCount = logs.filter(l => l.status === 'SUCCESS').length;
+            const failedCount = logs.filter(l => l.status === 'FAILED' || l.status === 'WARNING').length;
+
+            if (totalSentEl) totalSentEl.innerText = total;
+            if (totalSuccessEl) totalSuccessEl.innerText = successCount;
+            if (totalFailedEl) totalFailedEl.innerText = failedCount;
+            if (timestampEl) timestampEl.innerText = `Terakhir diperiksa: ${new Date().toLocaleTimeString()}`;
+
+            if (logs.length === 0) {
+                listEl.innerHTML = `<div class="p-2 bg-[#0f172a] rounded-xl text-slate-400 text-center">Belum ada riwayat log notifikasi tercatat.</div>`;
+                return;
+            }
+
+            listEl.innerHTML = '';
+            logs.forEach(log => {
+                let badgeColor = 'text-emerald-400 bg-emerald-950/60 border-emerald-800/40';
+                if (log.status === 'FAILED') badgeColor = 'text-rose-400 bg-rose-950/60 border-rose-800/40';
+                if (log.status === 'WARNING') badgeColor = 'text-amber-400 bg-amber-950/60 border-amber-800/40';
+
+                listEl.innerHTML += `
+                    <div class="p-2 bg-[#0f172a] rounded-xl border border-slate-700/60 flex items-center justify-between gap-2">
+                        <div>
+                            <span class="text-[10px] text-slate-400 block">${log.time}</span>
+                            <span class="text-slate-200 font-sans">${log.description}</span>
+                        </div>
+                        <span class="text-[9px] font-bold px-2 py-0.5 rounded border uppercase shrink-0 ${badgeColor}">${log.status}</span>
+                    </div>
+                `;
+            });
+        }
+
+        /* --- MANAJEMEN FILE LAMPIRAN AGENDA (MAX 3MB) --- */
+        function handleAgendaFileUpload(event) {
+            const file = event.target.files[0];
+            const errorEl = document.getElementById('agendaFileError');
+            errorEl.classList.add('hidden');
+            errorEl.innerText = '';
+
+            if (!file) {
+                tempAgendaFileData = null;
+                tempAgendaFileName = null;
+                tempAgendaFileType = null;
+                return;
+            }
+
+            const maxSize = 3 * 1024 * 1024;
+            if (file.size > maxSize) {
+                errorEl.innerText = "Ukuran file melebihi batas maksimal 3MB!";
+                errorEl.classList.remove('hidden');
+                event.target.value = '';
+                tempAgendaFileData = null;
+                tempAgendaFileName = null;
+                tempAgendaFileType = null;
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                tempAgendaFileData = e.target.result;
+                tempAgendaFileName = file.name;
+                tempAgendaFileType = file.type;
+                showToast("File berhasil dilampirkan!", "success");
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function previewAgendaFile(agendaId) {
+            const agenda = appState.agendas.find(a => a.id === agendaId);
+            if (!agenda || !agenda.fileData) {
+                showToast("Tidak ada file lampiran pada agenda ini.", "error");
+                return;
+            }
+
+            const titleEl = document.getElementById('previewFileTitle');
+            const containerEl = document.getElementById('previewFileContainer');
+            titleEl.innerHTML = `<i data-lucide="file-text" class="w-4 h-4 text-pink-400"></i> Pratinjau: ${agenda.fileName || 'Lampiran'}`;
+            containerEl.innerHTML = '';
+
+            if (agenda.fileType && agenda.fileType.includes('image')) {
+                containerEl.innerHTML = `<img src="${agenda.fileData}" class="max-w-full max-h-[500px] object-contain rounded-xl border border-slate-700" />`;
+            } else if (agenda.fileType && agenda.fileType.includes('pdf')) {
+                containerEl.innerHTML = `<iframe src="${agenda.fileData}" class="w-full h-[500px] rounded-xl border border-slate-700 bg-white"></iframe>`;
+            } else {
+                containerEl.innerHTML = `<div class="p-6 text-center text-slate-300">Format file tidak mendukung pratinjau langsung. Silakan unduh file.</div>`;
+            }
+
+            document.getElementById('modalAgendaFilePreview').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function closeAgendaFilePreview() {
+            document.getElementById('modalAgendaFilePreview').classList.add('hidden');
+        }
+
+        function downloadAgendaFile(agendaId) {
+            const agenda = appState.agendas.find(a => a.id === agendaId);
+            if (!agenda || !agenda.fileData) {
+                showToast("Tidak ada file untuk diunduh.", "error");
+                return;
+            }
+            const a = document.createElement('a');
+            a.href = agenda.fileData;
+            a.download = agenda.fileName || `Lampiran_Agenda_${agenda.id}`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            showToast("File berhasil diunduh!", "success");
+        }
+
+        /* --- MODUL AGENDA --- */
         function openAgendaModal(editId = null) {
             const form = document.querySelector('#modalAgenda form');
             if(form) form.reset();
             document.getElementById('agendaId').value = '';
+            document.getElementById('agendaFileError').classList.add('hidden');
+            tempAgendaFileData = null;
+            tempAgendaFileName = null;
+            tempAgendaFileType = null;
+
             if (editId) {
                 const ag = appState.agendas.find(a => a.id === editId);
                 if (ag) {
@@ -1154,6 +1522,9 @@
                     document.getElementById('agendaTanggal').value = ag.tanggal;
                     document.getElementById('agendaJam').value = ag.jam;
                     document.getElementById('agendaDurasi').value = ag.durasi || '';
+                    tempAgendaFileData = ag.fileData || null;
+                    tempAgendaFileName = ag.fileName || null;
+                    tempAgendaFileType = ag.fileType || null;
                 }
             } else {
                 document.getElementById('agendaModalHeader').innerText = "Tambah Agenda Baru";
@@ -1162,44 +1533,82 @@
             document.getElementById('modalAgenda').classList.remove('hidden');
         }
         function closeAgendaModal() { document.getElementById('modalAgenda').classList.add('hidden'); }
+        
         function saveAgenda(e) {
             e.preventDefault();
-            if(appState.currentUser && appState.currentUser.isGuest) { showToast("Akses Tamu tidak diizinkan mengubah data.", "error"); return; }
+            if(appState.currentUser && appState.currentUser.isGuest) { 
+                showToast("Akses Tamu tidak diizinkan mengubah data.", "error"); 
+                return; 
+            }
             const id = document.getElementById('agendaId').value;
-            const nama = document.getElementById('agendaNama').value;
-            const lokasi = document.getElementById('agendaLokasi').value;
+            const nama = document.getElementById('agendaNama').value.trim();
+            const lokasi = document.getElementById('agendaLokasi').value.trim();
             const kriteria = document.getElementById('agendaKriteria').value;
             const status = document.getElementById('agendaStatus').value;
             const tanggal = document.getElementById('agendaTanggal').value;
             const jam = document.getElementById('agendaJam').value;
             const durasi = parseFloat(document.getElementById('agendaDurasi').value) || null;
 
+            if (!nama || !tanggal || !jam) {
+                showToast("Mohon lengkapi data agenda dengan benar.", "error");
+                return;
+            }
+
+            const isDuplicate = appState.agendas.some(a => a.nama.toLowerCase() === nama.toLowerCase() && a.tanggal === tanggal && a.id !== id);
+            if (isDuplicate) {
+                showToast("Agenda dengan nama dan tanggal yang sama sudah tercatat!", "error");
+                return;
+            }
+
             if (id) {
                 const idx = appState.agendas.findIndex(a => a.id === id);
-                if (idx !== -1) appState.agendas[idx] = { id, nama, lokasi, kriteria, status, tanggal, jam, durasi };
-                showToast("Agenda diperbarui!", "success");
+                if (idx !== -1) {
+                    appState.agendas[idx] = { 
+                        id, nama, lokasi, kriteria, status, tanggal, jam, durasi,
+                        fileData: tempAgendaFileData, fileName: tempAgendaFileName, fileType: tempAgendaFileType
+                    };
+                }
+                showToast("Agenda berhasil diperbarui!", "success");
+                logNotificationEvent("AGENDA_UPDATE", `Agenda "${nama}" diperbarui`, "SUCCESS");
             } else {
-                appState.agendas.push({ id: 'AG-' + Date.now(), nama, lokasi, kriteria, status, tanggal, jam, durasi });
-                showToast("Agenda ditambahkan!", "success");
+                appState.agendas.push({ 
+                    id: 'AG-' + Date.now(), nama, lokasi, kriteria, status, tanggal, jam, durasi,
+                    fileData: tempAgendaFileData, fileName: tempAgendaFileName, fileType: tempAgendaFileType
+                });
+                showToast("Agenda baru berhasil ditambahkan!", "success");
+                logNotificationEvent("AGENDA_CREATE", `Agenda baru "${nama}" ditambahkan`, "SUCCESS");
             }
-            saveState(); closeAgendaModal(); renderAll();
+            saveState(); 
+            closeAgendaModal(); 
+            renderAll();
         }
+
         function deleteAgenda(id) {
-            appState.agendas = appState.agendas.filter(a => a.id !== id);
-            saveState(); renderAll(); showToast("Agenda dihapus", "info");
+            if (confirm("Apakah Anda yakin ingin menghapus agenda ini?")) {
+                appState.agendas = appState.agendas.filter(a => a.id !== id);
+                saveState(); 
+                renderAll(); 
+                showToast("Agenda berhasil dihapus secara permanen.", "info");
+                logNotificationEvent("AGENDA_DELETE", `Agenda ID ${id} dihapus`, "WARNING");
+            }
         }
 
         function updateAgendaInline(id, field, value) {
-            if(appState.currentUser && appState.currentUser.isGuest) { showToast("Akses Tamu tidak diizinkan mengubah data.", "error"); renderAll(); return; }
+            if(appState.currentUser && appState.currentUser.isGuest) { 
+                showToast("Akses Tamu tidak diizinkan mengubah data.", "error"); 
+                renderAll(); 
+                return; 
+            }
             const ag = appState.agendas.find(a => a.id === id);
             if (ag) {
                 ag[field] = value;
                 saveState();
                 renderAll();
-                showToast("Agenda diperbarui", "success");
+                showToast("Status agenda diperbarui", "success");
             }
         }
 
+        /* --- MODUL TUGAS --- */
         function openTugasModal(editId = null) {
             const form = document.querySelector('#modalTugas form');
             if(form) form.reset();
@@ -1222,43 +1631,75 @@
             document.getElementById('modalTugas').classList.remove('hidden');
         }
         function closeTugasModal() { document.getElementById('modalTugas').classList.add('hidden'); }
+        
         function saveTugas(e) {
             e.preventDefault();
-            if(appState.currentUser && appState.currentUser.isGuest) { showToast("Akses Tamu tidak diizinkan mengubah data.", "error"); return; }
+            if(appState.currentUser && appState.currentUser.isGuest) { 
+                showToast("Akses Tamu tidak diizinkan mengubah data.", "error"); 
+                return; 
+            }
             const id = document.getElementById('tugasId').value;
-            const nama = document.getElementById('tugasNama').value;
-            const dosen = document.getElementById('tugasDosen').value;
+            const nama = document.getElementById('tugasNama').value.trim();
+            const dosen = document.getElementById('tugasDosen').value.trim();
             const deadline = document.getElementById('tugasDeadline').value;
             const pengerjaan = document.getElementById('tugasPengerjaan').value;
             const status = document.getElementById('tugasStatus').value;
             const catatan = document.getElementById('tugasCatatan').value;
 
+            if (!nama || !deadline) {
+                showToast("Mohon lengkapi nama tugas dan waktu deadline.", "error");
+                return;
+            }
+
+            const isDuplicate = appState.tasks.some(t => t.nama.toLowerCase() === nama.toLowerCase() && t.dosen.toLowerCase() === dosen.toLowerCase() && t.id !== id);
+            if (isDuplicate) {
+                showToast("Tugas dengan nama dan dosen pengampu yang sama sudah ada!", "error");
+                return;
+            }
+
             if (id) {
                 const idx = appState.tasks.findIndex(t => t.id === id);
-                if (idx !== -1) appState.tasks[idx] = { id, nama, dosen, deadline, pengerjaan, status, catatan };
-                showToast("Tugas diperbarui!", "success");
+                if (idx !== -1) {
+                    appState.tasks[idx] = { id, nama, dosen, deadline, pengerjaan, status, catatan };
+                }
+                showToast("Tugas berhasil diperbarui!", "success");
+                logNotificationEvent("TASK_UPDATE", `Tugas "${nama}" diperbarui`, "SUCCESS");
             } else {
                 appState.tasks.push({ id: 'TG-' + Date.now(), nama, dosen, deadline, pengerjaan, status, catatan });
-                showToast("Tugas baru dicatat!", "success");
+                showToast("Tugas baru berhasil dicatat!", "success");
+                logNotificationEvent("TASK_CREATE", `Tugas baru "${nama}" ditambahkan`, "SUCCESS");
             }
-            saveState(); closeTugasModal(); renderAll();
+            saveState(); 
+            closeTugasModal(); 
+            renderAll();
         }
+
         function deleteTugas(id) {
-            appState.tasks = appState.tasks.filter(t => t.id !== id);
-            saveState(); renderAll(); showToast("Tugas dihapus", "info");
+            if (confirm("Apakah Anda yakin ingin menghapus tugas ini secara permanen?")) {
+                appState.tasks = appState.tasks.filter(t => t.id !== id);
+                saveState(); 
+                renderAll(); 
+                showToast("Tugas berhasil dihapus.", "info");
+                logNotificationEvent("TASK_DELETE", `Tugas ID ${id} dihapus`, "WARNING");
+            }
         }
 
         function updateTugasInline(id, field, value) {
-            if(appState.currentUser && appState.currentUser.isGuest) { showToast("Akses Tamu tidak diizinkan mengubah data.", "error"); renderAll(); return; }
+            if(appState.currentUser && appState.currentUser.isGuest) { 
+                showToast("Akses Tamu tidak diizinkan mengubah data.", "error"); 
+                renderAll(); 
+                return; 
+            }
             const t = appState.tasks.find(x => x.id === id);
             if (t) {
                 t[field] = value;
                 saveState();
                 renderAll();
-                showToast("Tugas diperbarui", "success");
+                showToast("Status tugas berhasil diperbarui", "success");
             }
         }
 
+        /* --- MODUL NOTULENSI --- */
         function openNotulensiModal(editId = null) {
             const form = document.querySelector('#modalNotulensi form');
             if (form) form.reset();
@@ -1286,13 +1727,19 @@
             document.getElementById('modalNotulensi').classList.remove('hidden');
         }
         function closeNotulensiModal() { document.getElementById('modalNotulensi').classList.add('hidden'); }
+        
         function saveNotulensi(e) {
             e.preventDefault();
             if (appState.currentUser && appState.currentUser.isGuest) { showToast("Akses Tamu tidak diizinkan mengubah data.", "error"); return; }
             const id = document.getElementById('notulensiId').value;
-            const judul = document.getElementById('notulensiJudul').value;
+            const judul = document.getElementById('notulensiJudul').value.trim();
             const tanggal = document.getElementById('notulensiTanggal').value;
-            const pembahasan = document.getElementById('notulensiPembahasan').value;
+            const pembahasan = document.getElementById('notulensiPembahasan').value.trim();
+
+            if (!judul || !pembahasan) {
+                showToast("Judul dan isi pembahasan rapat wajib diisi.", "error");
+                return;
+            }
 
             if (id) {
                 const idx = appState.notulensi.findIndex(n => n.id === id);
@@ -1313,11 +1760,15 @@
             }
             saveState(); closeNotulensiModal(); renderAll();
         }
+
         function deleteNotulensi(id) {
-            appState.notulensi = appState.notulensi.filter(n => n.id !== id);
-            saveState(); renderAll(); showToast("Notulensi dihapus.", "info");
+            if (confirm("Hapus dokumen notulensi rapat ini secara permanen?")) {
+                appState.notulensi = appState.notulensi.filter(n => n.id !== id);
+                saveState(); renderAll(); showToast("Notulensi dihapus.", "info");
+            }
         }
 
+        /* --- MODUL JADWAL KULIAH --- */
         function openJadwalModal(editId = null) {
             const form = document.querySelector('#modalJadwal form');
             if(form) form.reset();
@@ -1339,29 +1790,53 @@
             document.getElementById('modalJadwal').classList.remove('hidden');
         }
         function closeJadwalModal() { document.getElementById('modalJadwal').classList.add('hidden'); }
+        
         function saveJadwal(e) {
             e.preventDefault();
-            if(appState.currentUser && appState.currentUser.isGuest) { showToast("Akses Tamu tidak diizinkan mengubah data.", "error"); return; }
+            if(appState.currentUser && appState.currentUser.isGuest) { 
+                showToast("Akses Tamu tidak diizinkan mengubah data.", "error"); 
+                return; 
+            }
             const id = document.getElementById('jadwalId').value;
             const hari = document.getElementById('jadwalHari').value;
-            const matkul = document.getElementById('jadwalMatkul').value;
-            const ruang = document.getElementById('jadwalRuang').value;
-            const jam = document.getElementById('jadwalJam').value;
-            const dosen = document.getElementById('jadwalDosen').value;
+            const matkul = document.getElementById('jadwalMatkul').value.trim();
+            const ruang = document.getElementById('jadwalRuang').value.trim();
+            const jam = document.getElementById('jadwalJam').value.trim();
+            const dosen = document.getElementById('jadwalDosen').value.trim();
+
+            if (!matkul || !jam || !ruang || !dosen) {
+                showToast("Mohon lengkapi seluruh field jadwal kuliah.", "error");
+                return;
+            }
+
+            const isDuplicate = appState.schedules.some(s => s.hari === hari && s.jam.toLowerCase() === jam.toLowerCase() && s.matkul.toLowerCase() === matkul.toLowerCase() && s.id !== id);
+            if (isDuplicate) {
+                showToast("Jadwal mata kuliah pada hari dan jam tersebut sudah ada!", "error");
+                return;
+            }
 
             if (id) {
                 const idx = appState.schedules.findIndex(s => s.id === id);
-                if (idx !== -1) appState.schedules[idx] = { id, hari, matkul, ruang, jam, dosen };
-                showToast("Jadwal diperbarui!", "success");
+                if (idx !== -1) {
+                    appState.schedules[idx] = { id, hari, matkul, ruang, jam, dosen };
+                }
+                showToast("Jadwal kuliah berhasil diperbarui!", "success");
             } else {
                 appState.schedules.push({ id: 'SCH-' + Date.now(), hari, matkul, ruang, jam, dosen });
-                showToast("Jadwal disimpan!", "success");
+                showToast("Jadwal kuliah baru berhasil disimpan!", "success");
             }
-            saveState(); closeJadwalModal(); renderAll();
+            saveState(); 
+            closeJadwalModal(); 
+            renderAll();
         }
+
         function deleteJadwal(id) {
-            appState.schedules = appState.schedules.filter(s => s.id !== id);
-            saveState(); renderAll(); showToast("Jadwal dihapus", "info");
+            if (confirm("Apakah Anda yakin ingin menghapus jadwal kuliah ini secara permanen?")) {
+                appState.schedules = appState.schedules.filter(s => s.id !== id);
+                saveState(); 
+                renderAll(); 
+                showToast("Jadwal berhasil dihapus.", "info");
+            }
         }
 
         function openFinanceModal() { document.getElementById('modalFinance').classList.remove('hidden'); }
@@ -1378,8 +1853,10 @@
             showToast("Transaksi keuangan dicatat!", "success");
         }
         function deleteFinance(id) {
-            appState.finances = appState.finances.filter(f => f.id !== id);
-            saveState(); renderAll(); showToast("Transaksi dihapus", "info");
+            if (confirm("Hapus transaksi ini?")) {
+                appState.finances = appState.finances.filter(f => f.id !== id);
+                saveState(); renderAll(); showToast("Transaksi dihapus", "info");
+            }
         }
 
         function renderAll() {
@@ -1398,7 +1875,11 @@
             const taskPct = appState.tasks.length > 0 ? Math.round((doneTasks / appState.tasks.length) * 100) : 0;
             if (document.getElementById('statTotalTugas')) document.getElementById('statTotalTugas').innerText = appState.tasks.length;
             if (document.getElementById('statTugasPct')) document.getElementById('statTugasPct').innerText = `${taskPct}% Terkumpul`;
+            
             if (document.getElementById('statTotalAgenda')) document.getElementById('statTotalAgenda').innerText = appState.agendas.length;
+            const pendingAgendas = appState.agendas.filter(a => a.status === 'Belum Terlaksana').length;
+            if (document.getElementById('statAgendaPending')) document.getElementById('statAgendaPending').innerText = `${pendingAgendas} Belum Terlaksana`;
+
             if (document.getElementById('statTotalNotulensi')) document.getElementById('statTotalNotulensi').innerText = appState.notulensi.length;
 
             const inc = appState.finances.filter(f => f.type === 'Pemasukan').reduce((a, b) => a + b.amount, 0);
@@ -1411,6 +1892,23 @@
             grid.innerHTML = '';
             appState.agendas.forEach(a => {
                 let durasiText = a.durasi ? ` | ${a.durasi} Jam` : '';
+                let fileActionHtml = '';
+                if (a.fileData) {
+                    fileActionHtml = `
+                        <div class="flex items-center gap-2 pt-2 border-t border-slate-800/80">
+                            <span class="text-[10px] text-slate-300 truncate max-w-[120px]" title="${a.fileName}">📎 ${a.fileName}</span>
+                            <div class="flex gap-1 ml-auto">
+                                <button onclick="previewAgendaFile('${a.id}')" class="px-2.5 py-1 rounded-lg bg-pink-950/70 hover:bg-pink-900 text-pink-300 font-bold text-[10px] flex items-center gap-1">
+                                    <i data-lucide="eye" class="w-3 h-3"></i> Lihat
+                                </button>
+                                <button onclick="downloadAgendaFile('${a.id}')" class="px-2.5 py-1 rounded-lg bg-purple-950/70 hover:bg-purple-900 text-purple-300 font-bold text-[10px] flex items-center gap-1">
+                                    <i data-lucide="download" class="w-3 h-3"></i> Unduh
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }
+
                 grid.innerHTML += `
                     <div class="bg-[#0f172a] p-4 sm:p-5 rounded-3xl border border-pink-950/50 space-y-3 flex flex-col justify-between shadow-sm">
                         <div class="space-y-2">
@@ -1429,6 +1927,7 @@
                             <p class="text-xs text-slate-400">Lokasi: ${a.lokasi}</p>
                             <p class="text-xs text-slate-400 font-mono">${a.tanggal} | ${a.jam} WIB${durasiText}</p>
                         </div>
+                        ${fileActionHtml}
                         <div class="flex justify-end gap-2 pt-3 border-t border-slate-800/80">
                             <button onclick="openAgendaModal('${a.id}')" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-pink-400 font-bold text-xs">Edit</button>
                             <button onclick="deleteAgenda('${a.id}')" class="px-3 py-1.5 rounded-xl bg-red-950/40 hover:bg-red-900/40 text-red-400 font-bold text-xs">Hapus</button>
@@ -1483,19 +1982,24 @@
                     </button>
                 ` : '';
 
+                let signStatusBadge = n.signType ? `<span class="inline-block text-[10px] bg-emerald-950 text-emerald-300 px-2 py-0.5 rounded border border-emerald-800/50">✅ Disahkan (${n.signType === 'qr' ? 'Digital' : 'Manual'})</span>` : '';
+
                 grid.innerHTML += `
                     <div class="bg-[#0f172a] p-4 sm:p-5 rounded-3xl border border-indigo-950/50 space-y-3 flex flex-col justify-between shadow-sm">
                         <div class="space-y-2">
                             <span class="text-[10px] font-bold uppercase text-indigo-400 bg-indigo-950/60 px-2 py-0.5 rounded border border-indigo-800/40">Notulensi Rapat</span>
                             <h4 class="font-bold text-white text-sm">${n.judul}</h4>
                             <p class="text-xs text-slate-400 font-mono">Tanggal: ${n.tanggal}</p>
-                            ${n.photoData ? `<span class="inline-block text-[10px] bg-indigo-950 text-indigo-300 px-2 py-0.5 rounded border border-indigo-800/50">📸 Ada Foto</span>` : ''}
-                            ${n.videoData ? `<span class="inline-block text-[10px] bg-violet-950 text-violet-300 px-2 py-0.5 rounded border border-violet-800/50">🎥 Ada Video</span>` : ''}
+                            <div class="flex gap-1.5 flex-wrap">
+                                ${n.photoData ? `<span class="inline-block text-[10px] bg-indigo-950 text-indigo-300 px-2 py-0.5 rounded border border-indigo-800/50">📷 Foto</span>` : ''}
+                                ${n.videoData ? `<span class="inline-block text-[10px] bg-violet-950 text-violet-300 px-2 py-0.5 rounded border border-violet-800/50">🎥 Video</span>` : ''}
+                                ${signStatusBadge}
+                            </div>
                         </div>
                         <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between gap-2 flex-wrap">
                             <div class="flex gap-2 flex-wrap">
                                 <button onclick="promptSelectSignType('${n.id}')" class="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs flex items-center gap-1 shadow-md">
-                                    <i data-lucide="file-down" class="w-3.5 h-3.5"></i> Unduh PDF
+                                    <i data-lucide="file-down" class="w-3.5 h-3.5"></i> TTD & Unduh
                                 </button>
                                 ${videoBtnHtml}
                             </div>
