@@ -256,6 +256,35 @@
                     </div>
                 </div>
 
+                <!-- PINTASAN HARI INI & BESOK (OTOMATIS) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Pintasan Hari Ini -->
+                    <div class="bg-[#0f172a] rounded-3xl p-4 sm:p-5 border border-indigo-900/40 shadow-sm space-y-3">
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                            <h3 class="font-bold text-xs uppercase tracking-wider text-indigo-400 flex items-center gap-1.5">
+                                <i data-lucide="zap" class="w-4 h-4 text-indigo-400"></i> Pintasan Hari Ini
+                            </h3>
+                            <span id="badgeTodayDate" class="text-[10px] font-mono text-slate-400">--</span>
+                        </div>
+                        <div id="dashboardTodayShortcuts" class="space-y-2 max-h-40 overflow-y-auto custom-scrollbar text-xs">
+                            <p class="text-slate-400 text-center py-2">Memuat agenda & tugas hari ini...</p>
+                        </div>
+                    </div>
+
+                    <!-- Pintasan Besok -->
+                    <div class="bg-[#0f172a] rounded-3xl p-4 sm:p-5 border border-purple-900/40 shadow-sm space-y-3">
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                            <h3 class="font-bold text-xs uppercase tracking-wider text-purple-400 flex items-center gap-1.5">
+                                <i data-lucide="calendar-plus" class="w-4 h-4 text-purple-400"></i> Pintasan Besok
+                            </h3>
+                            <span id="badgeTomorrowDate" class="text-[10px] font-mono text-slate-400">--</span>
+                        </div>
+                        <div id="dashboardTomorrowShortcuts" class="space-y-2 max-h-40 overflow-y-auto custom-scrollbar text-xs">
+                            <p class="text-slate-400 text-center py-2">Memuat agenda & tugas besok...</p>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- STATS GRID -->
                 <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                     <div class="bg-[#0f172a] p-4 sm:p-5 rounded-2xl border border-blue-900/40 shadow-sm flex justify-between items-center relative overflow-hidden">
@@ -783,7 +812,7 @@
         </div>
     </div>
 
-    <!-- SCRIPT LOGIC (DENGAN PENAMBAHAN FITUR NOTIFIKASI & PANEL LAPORAN AUDIT) -->
+    <!-- SCRIPT LOGIC -->
     <script>
         const DB_KEY = 'MYJADWAL_DATA_V21';
         let appState = {
@@ -814,6 +843,8 @@
         let mediaStream = null;
         let mediaRecorder = null;
         let recordedChunks = [];
+        let alarmAudioContext = null;
+        let alarmIntervalId = null;
 
         window.onload = function() {
             lucide.createIcons();
@@ -1322,8 +1353,6 @@
             
             const statusText = appState.settings.notificationsEnabled ? "diaktifkan" : "dinonaktifkan";
             showToast(`Fitur notifikasi berhasil ${statusText}.`, "success");
-            
-            // Catat log audit perubahan pengaturan
             logNotificationEvent("SETTINGS_UPDATE", `Notifikasi sistem ${statusText}`, appState.settings.notificationsEnabled ? "SUCCESS" : "WARNING");
         }
 
@@ -1363,7 +1392,6 @@
                 status,
                 time: timeString
             });
-            // Batasi log maksimal 30 item terakhir
             if (appState.notificationLogs.length > 30) {
                 appState.notificationLogs.pop();
             }
@@ -1498,6 +1526,60 @@
             a.click();
             a.remove();
             showToast("File berhasil diunduh!", "success");
+        }
+
+        /* --- PENGINGAT ALARM WAKTU NYATA & AUDIO --- */
+        function testAlarmSound() {
+            playBeepSound();
+            showToast("Uji suara alarm berbunyi.", "info");
+            const stopBtn = document.getElementById('stopAlarmBtn');
+            if (stopBtn) stopBtn.classList.remove('hidden');
+        }
+
+        function stopAlarmSound() {
+            if (alarmIntervalId) {
+                clearInterval(alarmIntervalId);
+                alarmIntervalId = null;
+            }
+            const stopBtn = document.getElementById('stopAlarmBtn');
+            if (stopBtn) stopBtn.classList.add('hidden');
+            showToast("Alarm dimatikan.", "info");
+        }
+
+        function playBeepSound() {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!alarmAudioContext) {
+                    alarmAudioContext = new AudioContext();
+                }
+                if (alarmAudioContext.state === 'suspended') {
+                    alarmAudioContext.resume();
+                }
+                
+                let count = 0;
+                if (alarmIntervalId) clearInterval(alarmIntervalId);
+
+                alarmIntervalId = setInterval(() => {
+                    if (count >= 4) {
+                        clearInterval(alarmIntervalId);
+                        alarmIntervalId = null;
+                        return;
+                    }
+                    const osc = alarmAudioContext.createOscillator();
+                    const gainNode = alarmAudioContext.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(880, alarmAudioContext.currentTime); // A5 note
+                    gainNode.gain.setValueAtTime(0.2, alarmAudioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.001, alarmAudioContext.currentTime + 0.4);
+                    osc.connect(gainNode);
+                    gainNode.connect(alarmAudioContext.destination);
+                    osc.start();
+                    osc.stop(alarmAudioContext.currentTime + 0.4);
+                    count++;
+                }, 500);
+            } catch (e) {
+                console.error("Audio error:", e);
+            }
         }
 
         /* --- MODUL AGENDA --- */
@@ -1867,7 +1949,62 @@
             renderFinanceView();
             renderJadwalGrid();
             renderCalendarWidget();
+            renderDashboardShortcuts();
             lucide.createIcons();
+        }
+
+        /* --- RENDER PINTASAN HARI INI & BESOK (OTOMATIS) --- */
+        function renderDashboardShortcuts() {
+            const todayEl = document.getElementById('dashboardTodayShortcuts');
+            const tomorrowEl = document.getElementById('dashboardTomorrowShortcuts');
+            const badgeTodayDate = document.getElementById('badgeTodayDate');
+            const badgeTomorrowDate = document.getElementById('badgeTomorrowDate');
+
+            if (!todayEl || !tomorrowEl) return;
+
+            const now = new Date();
+            const todayStr = now.toISOString().split('T')[0];
+            
+            const tomorrow = new Date(now);
+            tomorrow.setDate(now.getDate() + 1);
+            const tomorrowStr = tomorrow.toISOString().split('T')[0];
+
+            if (badgeTodayDate) badgeTodayDate.innerText = todayStr;
+            if (badgeTomorrowDate) badgeTomorrowDate.innerText = tomorrowStr;
+
+            // Filter Agenda & Tugas Hari Ini
+            const todayAgendas = appState.agendas.filter(a => a.tanggal === todayStr);
+            const todayTasks = appState.tasks.filter(t => t.deadline.startsWith(todayStr));
+
+            // Filter Agenda & Tugas Besok
+            const tomorrowAgendas = appState.agendas.filter(a => a.tanggal === tomorrowStr);
+            const tomorrowTasks = appState.tasks.filter(t => t.deadline.startsWith(tomorrowStr));
+
+            // Render Hari Ini
+            todayEl.innerHTML = '';
+            if (todayAgendas.length === 0 && todayTasks.length === 0) {
+                todayEl.innerHTML = `<p class="text-slate-400 text-center py-3">Tidak ada agenda atau tugas hari ini.</p>`;
+            } else {
+                todayAgendas.forEach(a => {
+                    todayEl.innerHTML += `<div class="p-2.5 bg-[#131d38] rounded-xl border border-indigo-900/50 flex justify-between items-center"><div><span class="font-bold text-white block">${a.nama}</span><span class="text-[10px] text-slate-400">Agenda • ${a.jam} WIB</span></div><span class="text-[10px] bg-pink-950 text-pink-300 px-2 py-0.5 rounded">${a.status}</span></div>`;
+                });
+                todayTasks.forEach(t => {
+                    todayEl.innerHTML += `<div class="p-2.5 bg-[#131d38] rounded-xl border border-amber-900/50 flex justify-between items-center"><div><span class="font-bold text-white block">${t.nama}</span><span class="text-[10px] text-slate-400">Tugas • ${t.dosen}</span></div><span class="text-[10px] bg-amber-950 text-amber-300 px-2 py-0.5 rounded">${t.status}</span></div>`;
+                });
+            }
+
+            // Render Besok
+            tomorrowEl.innerHTML = '';
+            if (tomorrowAgendas.length === 0 && tomorrowTasks.length === 0) {
+                tomorrowEl.innerHTML = `<p class="text-slate-400 text-center py-3">Tidak ada agenda atau tugas besok.</p>`;
+            } else {
+                tomorrowAgendas.forEach(a => {
+                    tomorrowEl.innerHTML += `<div class="p-2.5 bg-[#131d38] rounded-xl border border-purple-900/50 flex justify-between items-center"><div><span class="font-bold text-white block">${a.nama}</span><span class="text-[10px] text-slate-400">Agenda • ${a.jam} WIB</span></div><span class="text-[10px] bg-pink-950 text-pink-300 px-2 py-0.5 rounded">${a.status}</span></div>`;
+                });
+                tomorrowTasks.forEach(t => {
+                    tomorrowEl.innerHTML += `<div class="p-2.5 bg-[#131d38] rounded-xl border border-amber-900/50 flex justify-between items-center"><div><span class="font-bold text-white block">${t.nama}</span><span class="text-[10px] text-slate-400">Tugas • ${t.dosen}</span></div><span class="text-[10px] bg-amber-950 text-amber-300 px-2 py-0.5 rounded">${t.status}</span></div>`;
+                });
+            }
         }
 
         function renderDashboard() {
@@ -1884,6 +2021,8 @@
 
             const inc = appState.finances.filter(f => f.type === 'Pemasukan').reduce((a, b) => a + b.amount, 0);
             if (document.getElementById('statTotalIncome')) document.getElementById('statTotalIncome').innerText = `Rp ${inc.toLocaleString()}`;
+            
+            renderDashboardShortcuts();
         }
 
         function renderAgendaGrid() {
@@ -2062,6 +2201,7 @@
             });
         }
 
+        /* --- PERBAIKAN BUG KALENDER INTERAKTIF --- */
         function renderCalendarWidget() {
             const grid = document.getElementById('calendarGrid');
             if (!grid) return;
@@ -2071,9 +2211,13 @@
             const mNames = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
             if (document.getElementById('calendarMonthYear')) document.getElementById('calendarMonthYear').innerText = `${mNames[month]} ${year}`;
 
+            // Perbaikan bug perhitungan offset hari pertama dalam minggu (0 = Minggu)
             const firstDayIndex = new Date(year, month, 1).getDay();
             const totalDays = new Date(year, month + 1, 0).getDate();
-            for (let i = 0; i < firstDayIndex; i++) grid.innerHTML += `<div></div>`;
+            
+            for (let i = 0; i < firstDayIndex; i++) {
+                grid.innerHTML += `<div></div>`;
+            }
             for (let day = 1; day <= totalDays; day++) {
                 const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                 grid.innerHTML += `
@@ -2095,7 +2239,10 @@
 
             const firstDayIndex = new Date(year, month, 1).getDay();
             const totalDays = new Date(year, month + 1, 0).getDate();
-            for (let i = 0; i < firstDayIndex; i++) grid.innerHTML += `<div></div>`;
+            
+            for (let i = 0; i < firstDayIndex; i++) {
+                grid.innerHTML += `<div></div>`;
+            }
             for (let day = 1; day <= totalDays; day++) {
                 const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                 grid.innerHTML += `
@@ -2120,17 +2267,20 @@
             }
             document.getElementById('modalCalendarDetail').classList.remove('hidden');
         }
+
         function closeCalendarDetailModal() { document.getElementById('modalCalendarDetail').classList.add('hidden'); }
+        
         function changeMonth(dir) {
-            currentCalendarDate.setDate(1);
             currentCalendarDate.setMonth(currentCalendarDate.getMonth() + dir);
-            renderCalendarWidget(); renderFullCalendar();
+            renderCalendarWidget(); 
+            renderFullCalendar();
         }
 
         function toggleAppTheme() {
             appState.settings.themeMode = (appState.settings.themeMode === 'dark') ? 'light' : 'dark';
             saveState(); applyTheme();
         }
+
         function applyTheme() {
             const isDark = appState.settings.themeMode === 'dark';
             if (isDark) {
@@ -2143,6 +2293,7 @@
                 document.body.className = "bg-slate-100 text-slate-900 min-h-screen flex flex-col transition-colors duration-300";
             }
         }
+
         function switchTab(tabId) {
             document.querySelectorAll('section[id^="view-"]').forEach(sec => sec.classList.add('hidden'));
             const targetSec = document.getElementById(`view-${tabId}`);
@@ -2171,6 +2322,7 @@
                 }
             }
         }
+
         function startClock() {
             setInterval(() => {
                 const now = new Date();
@@ -2180,8 +2332,50 @@
                 if (document.getElementById('realtimeClock')) {
                     document.getElementById('realtimeClock').innerText = `${hh}.${mm}.${ss} WIB`;
                 }
+
+                // Cek pengingat waktu nyata & hitung mundur
+                updateRealtimeAlarmAndCountdown(now);
             }, 1000);
         }
+
+        function updateRealtimeAlarmAndCountdown(now) {
+            const countdownEl = document.getElementById('realtimeCountdown');
+            const titleEl = document.getElementById('nextEventTitle');
+            const subEl = document.getElementById('nextEventSub');
+
+            // Ambil semua agenda hari ini & tugas dengan deadline terdekat
+            const todayStr = now.toISOString().split('T')[0];
+            const todayAgendas = appState.agendas.filter(a => a.tanggal === todayStr && a.status === 'Belum Terlaksana');
+            
+            if (todayAgendas.length === 0) {
+                if (countdownEl) countdownEl.innerText = "-- : -- : --";
+                if (titleEl) titleEl.innerText = "Tidak ada agenda aktif hari ini";
+                if (subEl) subEl.innerText = "Semua agenda telah selesai atau kosong.";
+                return;
+            }
+
+            // Cari agenda terdekat berdasarkan jam
+            let nextAg = todayAgendas[0];
+            if (titleEl) titleEl.innerText = nextAg.nama;
+            if (subEl) subEl.innerText = `Lokasi: ${nextAg.lokasi} (${nextAg.jam} WIB)`;
+
+            // Hitung selisih waktu
+            const [targetHour, targetMinute] = nextAg.jam.split(':').map(Number);
+            const targetDate = new Date(now);
+            targetDate.setHours(targetHour || 0, targetMinute || 0, 0, 0);
+
+            const diffMs = targetDate - now;
+            if (diffMs > 0) {
+                const diffSec = Math.floor(diffMs / 1000);
+                const hh = String(Math.floor(diffSec / 3600)).padStart(2, '0');
+                const mm = String(Math.floor((diffSec % 3600) / 60)).padStart(2, '0');
+                const ss = String(diffSec % 60).padStart(2, '0');
+                if (countdownEl) countdownEl.innerText = `${hh} : ${mm} : ${ss}`;
+            } else {
+                if (countdownEl) countdownEl.innerText = "00 : 00 : 00";
+            }
+        }
+
         function openGoogleAccountChooser() {
             const list = document.getElementById('googleAccountsList');
             list.innerHTML = appState.savedAccounts.length === 0 ? '<div class="p-2 text-slate-400 text-center">Belum ada akun. Masukkan email di bawah.</div>' : '';
