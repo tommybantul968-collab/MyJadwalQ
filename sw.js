@@ -1,10 +1,8 @@
-const CACHE_NAME = 'myjadwal-v1';
+const CACHE_NAME = 'myjadwal-v2';
 const urlsToCache = [
   './',
   './index.html',
-  './manifest.json',
-  'https://cdn.tailwindcss.com',
-  'https://cdn.jsdelivr.net/npm/chart.js'
+  './manifest.json'
 ];
 
 self.addEventListener('install', (event) => {
@@ -13,6 +11,22 @@ self.addEventListener('install', (event) => {
       return cache.addAll(urlsToCache);
     })
   );
+  self.skipWaiting();
+});
+
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames.map((cacheName) => {
+          if (cacheName !== CACHE_NAME) {
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    })
+  );
+  self.clientsClaim();
 });
 
 self.addEventListener('fetch', (event) => {
