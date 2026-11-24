@@ -1,13 +1,9 @@
 <!DOCTYPE html>
-<html lang="id" class="h-full dark">
+<html lang="id" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MyJadwal - Aplikasi Agenda & Manajemen Kuliah</title>
-
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#0f172a">
-
+    <title>MyJadwal - Portal Kuliah & Organisasi Mahasiswa</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -16,514 +12,399 @@
             theme: {
                 extend: {
                     colors: {
-                        brand: {
-                            50: '#eff6ff',
-                            100: '#dbeafe',
-                            500: '#3b82f6',
-                            600: '#2563eb',
-                            700: '#1d4ed8',
-                        }
+                        darkBg: '#070b19',
+                        cardBg: '#0f172a',
+                        cardHover: '#131d38',
                     }
                 }
             }
         }
     </script>
-
-    <!-- Lucide Icons, Chart.js, html2pdf.js & QRious -->
+    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- html2pdf.js untuk Ekspor PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- QRious untuk Generator Kode QR -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
-
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
     <style>
-        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
-        .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #6366f1; border-radius: 9999px; }
-        html.light .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; }
-
-        @keyframes fadeInScale {
-            from { opacity: 0; transform: scale(0.98) translateY(6px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
-        }
-        .animate-fade-in {
-            animation: fadeInScale 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-
-        /* Light Mode Styling */
-        html.light body { background-color: #f8fafc !important; color: #0f172a !important; }
-        html.light header { background-color: rgba(255, 255, 255, 0.95) !important; border-color: #e2e8f0 !important; }
-        html.light header h2 { color: #0f172a !important; }
-        html.light .bg-\[\#0f172a\] { background-color: #ffffff !important; border-color: #e2e8f0 !important; box-shadow: 0 4px 15px -3px rgba(15, 23, 42, 0.08); }
-        html.light .bg-\[\#131d38\] { background-color: #f1f5f9 !important; border-color: #cbd5e1 !important; color: #1e293b !important; }
-        html.light .bg-\[\#1a2647\] { background-color: #e2e8f0 !important; color: #1e293b !important; }
-        html.light .border-slate-800, html.light .border-slate-800\/80, html.light .border-slate-800\/60, html.light .border-slate-700 { border-color: #e2e8f0 !important; }
-        
-        html.light main section:not(#view-dashboard) h2,
-        html.light main h3,
-        html.light main h4,
-        html.light .bg-\[\#0f172a\] .text-white,
-        html.light .bg-\[\#0f172a\] .text-slate-100,
-        html.light .bg-\[\#0f172a\] .text-slate-200,
-        html.light .bg-\[\#131d38\] .text-white,
-        html.light .bg-\[\#131d38\] .text-slate-100,
-        html.light .bg-\[\#131d38\] .text-slate-200,
-        html.light table td.text-white { color: #0f172a !important; }
-
-        html.light .text-slate-300 { color: #334155 !important; }
-        html.light .text-slate-400 { color: #475569 !important; }
-        html.light .text-slate-500 { color: #64748b !important; }
-        html.light input, html.light select, html.light textarea {
-            background-color: #ffffff !important;
-            color: #0f172a !important;
-            border-color: #cbd5e1 !important;
-        }
-        html.light nav.bg-\[\#131d38\] { background-color: #ffffff !important; border-color: #e2e8f0 !important; }
-        html.light .nav-btn.text-slate-400 { color: #475569 !important; }
-        html.light .nav-btn.text-slate-400:hover { color: #0f172a !important; background-color: #f1f5f9 !important; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.6); border-radius: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(99, 102, 241, 0.4); border-radius: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(99, 102, 241, 0.7); }
     </style>
 </head>
-<body class="bg-[#070b19] text-slate-200 dark:bg-[#070b19] dark:text-slate-200 min-h-screen flex flex-col transition-colors duration-300">
+<body class="bg-[#070b19] dark:bg-[#070b19] bg-slate-100 text-slate-800 dark:text-slate-200 min-h-screen flex flex-col transition-colors duration-300">
 
-    <!-- Toast Notification Container -->
-    <div id="toastContainer" class="fixed top-4 right-4 z-50 flex flex-col gap-3 max-w-xs w-full pointer-events-none px-4 sm:px-0"></div>
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
-    <!-- 1. WELCOME & LOGIN SCREEN -->
-    <div id="authScreen" class="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-tr from-violet-950 via-slate-900 to-blue-950 p-4 transition-all duration-500 overflow-y-auto">
-        <div class="bg-[#0f172a] border border-slate-800/80 rounded-3xl shadow-2xl p-6 sm:p-8 max-w-md w-full text-center relative overflow-hidden my-auto">
-            <div class="absolute -top-12 -right-12 w-36 h-36 bg-pink-500/20 rounded-full blur-3xl"></div>
-            <div class="absolute -bottom-12 -left-12 w-36 h-36 bg-cyan-500/20 rounded-full blur-3xl"></div>
-            
-            <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-tr from-blue-600 to-violet-600 text-white rounded-2xl mb-6 shadow-lg shadow-violet-500/30 animate-bounce">
-                <i data-lucide="calendar-check-2" class="w-10 h-10"></i>
+    <!-- SCREEN 1: LOGIN / AUTHENTICATION -->
+    <div id="authScreen" class="fixed inset-0 z-50 bg-[#070b19] dark:bg-[#070b19] bg-slate-100 flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl space-y-6 text-center">
+            <div class="w-16 h-16 bg-gradient-to-tr from-violet-600 to-indigo-600 rounded-2xl mx-auto flex items-center justify-center shadow-lg shadow-indigo-500/30">
+                <i data-lucide="calendar-check" class="w-8 h-8 text-white"></i>
             </div>
-            
-            <h1 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-violet-400 mb-2 tracking-tight">MyJadwal</h1>
-            <p class="text-xs text-slate-400 mb-8">Kelola agenda, tugas, keuangan, notulensi rapat dengan kamera, dan jadwal kuliahmu.</p>
-            
-            <div class="space-y-4">
-                <button onclick="openGoogleAccountChooser()" class="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 px-4 rounded-xl shadow-md transition">
-                    <svg class="w-5 h-5 bg-white rounded-full p-0.5 shrink-0" viewBox="0 0 24 24">
-                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-                    </svg>
-                    <span>Masuk dengan Google</span>
+            <div>
+                <h1 class="text-xl font-extrabold text-slate-900 dark:text-white">MyJadwal Workspace</h1>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Portal Jadwal, Tugas, Agenda, Notulensi & Keuangan Akademik</p>
+            </div>
+            <div class="space-y-3 pt-2">
+                <button onclick="openGoogleAccountChooser()" class="w-full py-3 px-4 bg-slate-50 dark:bg-[#131d38] hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700/80 rounded-2xl font-bold text-xs text-slate-800 dark:text-white flex items-center justify-center gap-3 transition shadow-md">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.13 0-5.78-2.11-6.73-4.96H1.19v3.15C3.17 21.36 7.23 24 12 24z"/><path fill="#FBBC05" d="M5.27 14.24c-.25-.72-.38-1.49-.38-2.24s.13-1.52.38-2.24V6.61H1.19C.43 8.13 0 9.86 0 11.7s.43 3.57 1.19 5.09l4.08-2.55z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.23 0 3.17 2.64 1.19 6.61l4.08 3.15c.95-2.85 3.6-4.96 6.73-4.96z"/></svg>
+                    Masuk dengan Akun Google
                 </button>
-
-                <div class="relative my-4">
-                    <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-slate-800"></div></div>
-                    <div class="relative flex justify-center text-[10px] uppercase"><span class="bg-[#0f172a] px-2 text-slate-500">Atau Akses Tamu</span></div>
-                </div>
-
-                <div class="flex gap-2">
-                    <input type="text" id="sharedAccessInput" placeholder="Masukkan ID Akses..." class="flex-1 bg-[#131d38] border border-slate-700 text-xs rounded-xl px-3 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-violet-500">
-                    <button onclick="loginAsGuest()" class="bg-violet-600 hover:bg-violet-700 text-white font-medium text-xs px-4 py-2.5 rounded-xl transition shrink-0">Lihat</button>
-                </div>
+                <button onclick="loginAsGuest()" class="w-full py-3 px-4 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 rounded-2xl font-bold text-xs text-slate-700 dark:text-slate-300 transition">
+                    Masuk sebagai Tamu (Guest)
+                </button>
             </div>
-            <p class="text-[11px] text-slate-500 mt-6">&copy; 2026 MyJadwal Workspace.</p>
         </div>
     </div>
 
-    <!-- MODAL GOOGLE CHOOSER -->
-    <div id="modalGoogleChooser" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
-        <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-sm w-full p-6 shadow-2xl text-left text-xs my-auto">
-            <h3 class="text-sm font-bold text-white mb-2">Pilih Akun Google</h3>
-            <p class="text-slate-400 mb-4">Pilih akun untuk masuk ke MyJadwal.</p>
-            <div id="googleAccountsList" class="space-y-2 mb-4"></div>
-            <form onsubmit="handleNewGoogleLogin(event)" class="space-y-3 pt-2 border-t border-slate-800">
-                <input type="email" id="customGoogleEmail" required placeholder="nama@gmail.com" class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white">
-                <div class="flex justify-end gap-2">
-                    <button type="button" onclick="closeGoogleChooser()" class="px-3 py-2 rounded-xl border border-slate-700 text-slate-300">Batal</button>
-                    <button type="submit" class="px-4 py-2 rounded-xl bg-violet-600 text-white font-medium">Lanjutkan</button>
-                </div>
+    <!-- MODAL PILIH AKUN GOOGLE -->
+    <div id="modalGoogleChooser" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl max-w-sm w-full p-6 shadow-2xl text-xs space-y-4 my-auto">
+            <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-3">
+                <h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2"><i data-lucide="user-check" class="w-4 h-4 text-indigo-400"></i> Pilih Akun Google</h3>
+                <button onclick="closeGoogleChooser()" class="text-slate-400 hover:text-slate-900 dark:hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div id="googleAccountsList" class="space-y-2 max-h-48 overflow-y-auto custom-scrollbar"></div>
+            <form onsubmit="handleNewGoogleLogin(event)" class="space-y-2 pt-2 border-t border-slate-200 dark:border-slate-800">
+                <label class="font-semibold text-slate-600 dark:text-slate-300 block">Tambah / Masukkan Email Lain</label>
+                <input type="email" id="customGoogleEmail" required placeholder="nama@gmail.com" class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white">
+                <button type="submit" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 rounded-xl font-bold text-white">Masuk dengan Email Ini</button>
             </form>
         </div>
     </div>
 
-    <!-- MAIN APP STRUCTURE -->
-    <div id="mainApp" class="hidden flex-1 flex flex-col min-h-screen">
-        <!-- TOP NAVIGATION BAR -->
-        <header class="bg-[#0b1329]/90 border-b border-slate-800/80 backdrop-blur-md sticky top-0 z-30 px-3 sm:px-6 py-3 flex items-center justify-between gap-3">
-            <div onclick="switchTab('dashboard')" class="flex items-center gap-2.5 cursor-pointer">
-                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-gradient-to-tr from-pink-500 via-purple-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-purple-500/30 border border-purple-400/30 shrink-0">
-                    <i data-lucide="calendar-check-2" class="w-5 h-5"></i>
+    <!-- MAIN APP WRAPPER -->
+    <div id="mainApp" class="hidden flex-1 flex flex-col">
+        <!-- TOP NAVBAR -->
+        <header class="bg-white/80 dark:bg-[#0f172a]/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 sticky top-0 z-40 px-4 sm:px-8 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-gradient-to-tr from-violet-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-md">
+                    <i data-lucide="calendar-check" class="w-5 h-5 text-white"></i>
                 </div>
                 <div>
-                    <h2 class="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white via-indigo-200 to-purple-200 text-sm sm:text-base leading-tight">MyJadwal</h2>
-                    <span id="accessModeBadge" class="text-[9px] uppercase font-bold px-1.5 py-0.5 rounded bg-violet-950 text-violet-400 border border-violet-800/50">Pemilik</span>
+                    <h2 class="text-sm font-extrabold text-slate-900 dark:text-white tracking-wide">MyJadwal</h2>
+                    <p class="text-[10px] text-slate-500 dark:text-slate-400">Workspace Akademik & Organisasi</p>
                 </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="text-right hidden sm:block">
+                    <span id="dashUserName" class="text-xs font-bold text-slate-900 dark:text-white block">User</span>
+                    <span id="dashAccessID" class="text-[10px] font-mono text-indigo-500 dark:text-indigo-400 cursor-pointer hover:underline" onclick="copyAccessID()" title="Klik untuk salin ID">MJ-000000</span>
+                </div>
+                <button onclick="toggleAppTheme()" class="p-2 bg-slate-100 dark:bg-[#131d38] hover:bg-slate-200 dark:hover:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 transition" title="Ganti Tema">
+                    <i data-lucide="sun-medium" class="w-4 h-4"></i>
+                </button>
             </div>
         </header>
 
-        <!-- MAIN CONTENT AREA -->
-        <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-6 space-y-4 sm:space-y-6">
+        <!-- BOTTOM NAVIGATION TAB -->
+        <nav class="fixed bottom-0 inset-x-0 z-40 bg-white/95 dark:bg-[#0f172a]/95 backdrop-blur-lg border-t border-slate-200 dark:border-slate-800 px-3 py-2 flex justify-around items-center max-w-2xl mx-auto sm:rounded-t-3xl shadow-2xl">
+            <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn flex items-center gap-2 px-3.5 py-2 rounded-2xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-bold text-xs transition-all shadow-sm">
+                <i data-lucide="layout-dashboard" class="w-4 h-4 shrink-0"></i>
+                <span class="nav-text opacity-100 max-w-[120px] transition-all duration-300 overflow-hidden whitespace-nowrap">Utama</span>
+            </button>
+            <button onclick="switchTab('agenda')" id="nav-agenda" class="nav-btn flex items-center gap-2 px-3 py-2 rounded-2xl text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-xs transition-all">
+                <i data-lucide="calendar-days" class="w-4 h-4 shrink-0"></i>
+                <span class="nav-text max-w-0 opacity-0 overflow-hidden transition-all duration-300 whitespace-nowrap">Agenda</span>
+            </button>
+            <button onclick="switchTab('tugas')" id="nav-tugas" class="nav-btn flex items-center gap-2 px-3 py-2 rounded-2xl text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-xs transition-all">
+                <i data-lucide="check-square" class="w-4 h-4 shrink-0"></i>
+                <span class="nav-text max-w-0 opacity-0 overflow-hidden transition-all duration-300 whitespace-nowrap">Tugas</span>
+            </button>
+            <button onclick="switchTab('notulensi')" id="nav-notulensi" class="nav-btn flex items-center gap-2 px-3 py-2 rounded-2xl text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-xs transition-all">
+                <i data-lucide="file-text" class="w-4 h-4 shrink-0"></i>
+                <span class="nav-text max-w-0 opacity-0 overflow-hidden transition-all duration-300 whitespace-nowrap">Notulensi</span>
+            </button>
+            <button onclick="switchTab('jadwal')" id="nav-jadwal" class="nav-btn flex items-center gap-2 px-3 py-2 rounded-2xl text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-xs transition-all">
+                <i data-lucide="book-open" class="w-4 h-4 shrink-0"></i>
+                <span class="nav-text max-w-0 opacity-0 overflow-hidden transition-all duration-300 whitespace-nowrap">Kuliah</span>
+            </button>
+            <button onclick="switchTab('keuangan')" id="nav-keuangan" class="nav-btn flex items-center gap-2 px-3 py-2 rounded-2xl text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-xs transition-all">
+                <i data-lucide="wallet" class="w-4 h-4 shrink-0"></i>
+                <span class="nav-text max-w-0 opacity-0 overflow-hidden transition-all duration-300 whitespace-nowrap">Kas</span>
+            </button>
+            <button onclick="switchTab('kalender')" id="nav-kalender" class="nav-btn flex items-center gap-2 px-3 py-2 rounded-2xl text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-xs transition-all">
+                <i data-lucide="calendar" class="w-4 h-4 shrink-0"></i>
+                <span class="nav-text max-w-0 opacity-0 overflow-hidden transition-all duration-300 whitespace-nowrap">Kalender</span>
+            </button>
+            <button onclick="switchTab('pengaturan')" id="nav-pengaturan" class="nav-btn flex items-center gap-2 px-3 py-2 rounded-2xl text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-xs transition-all">
+                <i data-lucide="settings" class="w-4 h-4 shrink-0"></i>
+                <span class="nav-text max-w-0 opacity-0 overflow-hidden transition-all duration-300 whitespace-nowrap">Sistem</span>
+            </button>
+        </nav>
 
-            <!-- HERO BANNER -->
-            <div class="bg-gradient-to-r from-violet-600 via-indigo-600 to-pink-600 rounded-3xl p-4 sm:p-6 text-white shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4 relative overflow-hidden">
-                <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
-                <div class="relative z-10">
-                    <span id="dashGreeting" class="text-[10px] font-bold uppercase tracking-widest text-violet-200 block mb-0.5">SELAMAT DATANG</span>
-                    <h2 id="dashUserName" class="text-xl sm:text-2xl font-black tracking-tight text-white">Mahasiswa</h2>
-                    <div class="flex items-center gap-1.5 mt-1.5 flex-wrap">
-                        <span class="text-[10px] text-violet-200 uppercase font-semibold">ID Akses:</span>
-                        <code id="dashAccessID" class="text-xs font-mono font-bold bg-black/25 px-2 py-0.5 rounded border border-white/20 text-pink-200">MJ-000000</code>
-                        <button onclick="copyAccessID()" title="Salin ID Akses" class="text-violet-200 hover:text-white transition p-0.5">
-                            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
-                        </button>
+        <!-- CONTAINER KONTEN UTAMA -->
+        <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-8 pb-28 space-y-6">
+            
+            <!-- VIEW 1: DASHBOARD -->
+            <section id="view-dashboard" class="space-y-6">
+                <!-- WIDGET REAL-TIME JAM & ALARM PENGINGAT -->
+                <div class="bg-gradient-to-r from-indigo-900/90 dark:from-indigo-950/80 via-white dark:via-[#0f172a] to-violet-900/90 dark:to-violet-950/80 border border-indigo-200 dark:border-indigo-900/50 rounded-3xl p-5 sm:p-6 shadow-xl flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div class="space-y-1 text-center md:text-left">
+                        <span id="realtimeClock" class="text-2xl sm:text-3xl font-mono font-extrabold text-slate-900 dark:text-white tracking-wider block">00.00.00 WIB</span>
+                        <p class="text-xs text-indigo-700 dark:text-indigo-300 flex items-center justify-center md:justify-start gap-1">
+                            <i data-lucide="clock" class="w-3.5 h-3.5"></i> Pengingat Agenda Terdekat: <strong id="nextEventTitle" class="text-slate-900 dark:text-white">Memuat...</strong>
+                        </p>
+                        <p id="nextEventSub" class="text-[11px] text-slate-600 dark:text-slate-400">Sistem memantau jadwal secara real-time.</p>
                     </div>
-                </div>
-
-                <!-- REAL TIME WAKTU & TANGGAL -->
-                <div class="bg-white/10 backdrop-blur-md rounded-2xl px-4 py-2.5 border border-white/20 text-right z-10 w-full md:w-auto flex md:flex-col justify-between items-center md:items-end">
-                    <span class="text-[9px] uppercase font-bold tracking-wider text-violet-200">WAKTU SEKARANG</span>
-                    <div id="realtimeClock" class="font-extrabold text-sm sm:text-base tracking-wide text-white">00.00.00 WIB</div>
-                    <div id="realtimeDateSub" class="text-[10px] text-violet-100 font-medium mt-0.5">Senin, 1 Januari 2026</div>
-                </div>
-            </div>
-
-            <!-- NAVIGASI IKON FITUR -->
-            <nav class="flex flex-wrap items-center justify-center sm:justify-start gap-2 bg-[#131d38] p-2.5 rounded-2xl border border-slate-800 shadow-sm">
-                <button onclick="switchTab('dashboard')" id="nav-dashboard" title="Dashboard" class="nav-btn px-3.5 py-2.5 rounded-xl transition-all duration-300 bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-sm shrink-0 flex items-center gap-2">
-                    <i data-lucide="layout-dashboard" class="w-5 h-5 shrink-0 transition-transform duration-300 active:scale-90"></i>
-                    <span class="nav-text text-xs font-semibold whitespace-nowrap opacity-100 transition-all duration-300">Dashboard</span>
-                </button>
-                <button onclick="switchTab('jadwal')" id="nav-jadwal" title="Jadwal Kuliah" class="nav-btn px-3.5 py-2.5 rounded-xl transition-all duration-300 text-slate-400 hover:text-white hover:bg-slate-800/50 shrink-0 flex items-center gap-2">
-                    <i data-lucide="calendar-range" class="w-5 h-5 text-cyan-400 shrink-0 transition-transform duration-300 active:scale-90"></i>
-                    <span class="nav-text text-xs font-semibold whitespace-nowrap max-w-0 opacity-0 overflow-hidden transition-all duration-300">Jadwal</span>
-                </button>
-                <button onclick="switchTab('tugas')" id="nav-tugas" title="Tugas" class="nav-btn px-3.5 py-2.5 rounded-xl transition-all duration-300 text-slate-400 hover:text-white hover:bg-slate-800/50 shrink-0 flex items-center gap-2">
-                    <i data-lucide="file-text" class="w-5 h-5 text-amber-400 shrink-0 transition-transform duration-300 active:scale-90"></i>
-                    <span class="nav-text text-xs font-semibold whitespace-nowrap max-w-0 opacity-0 overflow-hidden transition-all duration-300">Tugas</span>
-                </button>
-                <button onclick="switchTab('agenda')" id="nav-agenda" title="Agenda" class="nav-btn px-3.5 py-2.5 rounded-xl transition-all duration-300 text-slate-400 hover:text-white hover:bg-slate-800/50 shrink-0 flex items-center gap-2">
-                    <i data-lucide="calendar-clock" class="w-5 h-5 text-pink-400 shrink-0 transition-transform duration-300 active:scale-90"></i>
-                    <span class="nav-text text-xs font-semibold whitespace-nowrap max-w-0 opacity-0 overflow-hidden transition-all duration-300">Agenda</span>
-                </button>
-                <button onclick="switchTab('notulensi')" id="nav-notulensi" title="Notulensi" class="nav-btn px-3.5 py-2.5 rounded-xl transition-all duration-300 text-slate-400 hover:text-white hover:bg-slate-800/50 shrink-0 flex items-center gap-2">
-                    <i data-lucide="file-spreadsheet" class="w-5 h-5 text-indigo-400 shrink-0 transition-transform duration-300 active:scale-90"></i>
-                    <span class="nav-text text-xs font-semibold whitespace-nowrap max-w-0 opacity-0 overflow-hidden transition-all duration-300">Notulensi</span>
-                </button>
-                <button onclick="switchTab('keuangan')" id="nav-keuangan" title="Keuangan" class="nav-btn nav-owner-only px-3.5 py-2.5 rounded-xl transition-all duration-300 text-slate-400 hover:text-white hover:bg-slate-800/50 shrink-0 flex items-center gap-2">
-                    <i data-lucide="wallet" class="w-5 h-5 text-emerald-400 shrink-0 transition-transform duration-300 active:scale-90"></i>
-                    <span class="nav-text text-xs font-semibold whitespace-nowrap max-w-0 opacity-0 overflow-hidden transition-all duration-300">Keuangan</span>
-                </button>
-                <button onclick="switchTab('kalender')" id="nav-kalender" title="Kalender" class="nav-btn px-3.5 py-2.5 rounded-xl transition-all duration-300 text-slate-400 hover:text-white hover:bg-slate-800/50 shrink-0 flex items-center gap-2">
-                    <i data-lucide="calendar-days" class="w-5 h-5 text-purple-400 shrink-0 transition-transform duration-300 active:scale-90"></i>
-                    <span class="nav-text text-xs font-semibold whitespace-nowrap max-w-0 opacity-0 overflow-hidden transition-all duration-300">Kalender</span>
-                </button>
-                <button onclick="switchTab('settings')" id="nav-settings" title="Settings" class="nav-btn nav-owner-only px-3.5 py-2.5 rounded-xl transition-all duration-300 text-slate-400 hover:text-white hover:bg-slate-800/50 shrink-0 flex items-center gap-2">
-                    <i data-lucide="settings" class="w-5 h-5 text-blue-400 shrink-0 transition-transform duration-300 active:scale-90"></i>
-                    <span class="nav-text text-xs font-semibold whitespace-nowrap max-w-0 opacity-0 overflow-hidden transition-all duration-300">Settings</span>
-                </button>
-            </nav>
-
-            <!-- DASHBOARD VIEW -->
-            <section id="view-dashboard" class="space-y-6 animate-fade-in">
-                <!-- ALARM WIDGET -->
-                <div class="bg-[#0f172a] rounded-3xl p-4 sm:p-5 border border-slate-800 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                    <div class="flex items-center gap-3 sm:gap-4">
-                        <div id="alarmIconBox" class="w-12 h-12 rounded-2xl bg-amber-950/70 text-amber-400 border border-amber-800/50 flex items-center justify-center shrink-0">
-                            <i data-lucide="alarm-clock" class="w-6 h-6"></i>
+                    <div class="flex items-center gap-3 flex-wrap justify-center">
+                        <div class="bg-slate-100 dark:bg-black/40 px-4 py-2.5 rounded-2xl border border-indigo-200 dark:border-indigo-900/40 text-center">
+                            <span class="text-[10px] text-slate-500 dark:text-slate-400 uppercase tracking-wider block">Hitung Mundur</span>
+                            <span id="realtimeCountdown" class="text-sm font-mono font-bold text-emerald-600 dark:text-emerald-400">-- : -- : --</span>
                         </div>
-                        <div>
-                            <div class="flex items-center gap-2 flex-wrap">
-                                <span class="text-[10px] font-extrabold uppercase tracking-wider text-amber-400">PENGINGAT ALARM WAKTU NYATA</span>
-                                <span id="alarmStatusBadge" class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-950/70 text-emerald-400 border border-emerald-800/40">Aktif</span>
-                            </div>
-                            <h4 id="nextEventTitle" class="font-bold text-sm text-white mt-0.5">Memindai jadwal & agenda terdekat...</h4>
-                            <p id="nextEventSub" class="text-xs text-slate-400">Alarm otomatis berbunyi 15 menit & tepat saat waktu tiba.</p>
-                        </div>
-                    </div>
-
-                    <div class="flex flex-wrap items-center gap-3 w-full md:w-auto justify-between md:justify-end">
-                        <div class="bg-[#131d38] px-4 py-2 rounded-2xl border border-slate-800 text-center flex-1 md:flex-none">
-                            <span class="text-[9px] uppercase font-bold text-slate-400 block">HITUNG MUNDUR</span>
-                            <span id="realtimeCountdown" class="font-mono font-black text-base text-amber-400">-- : -- : --</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <button onclick="testAlarmSound()" title="Uji Suara Alarm" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl flex items-center gap-1.5 transition shadow-md shrink-0">
-                                <i data-lucide="volume-2" class="w-4 h-4"></i> Tes Alarm
+                        <div class="flex gap-2">
+                            <button onclick="testAlarmSound()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3.5 py-2.5 rounded-xl font-bold text-xs transition shadow-md flex items-center gap-1.5">
+                                <i data-lucide="bell" class="w-4 h-4"></i> Tes Alarm
                             </button>
-                            <button onclick="stopAlarmSound()" id="stopAlarmBtn" class="hidden bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl flex items-center gap-1.5 animate-pulse transition shadow-md shrink-0">
-                                <i data-lucide="bell-off" class="w-4 h-4"></i> Matikan
+                            <button id="stopAlarmBtn" onclick="stopAlarmSound()" class="hidden bg-rose-600 hover:bg-rose-700 text-white px-3.5 py-2.5 rounded-xl font-bold text-xs transition shadow-md flex items-center gap-1.5 animate-pulse">
+                                <i data-lucide="volume-x" class="w-4 h-4"></i> Matikan Alarm
                             </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- PINTASAN HARI INI & BESOK (OTOMATIS) -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Pintasan Hari Ini -->
-                    <div class="bg-[#0f172a] rounded-3xl p-4 sm:p-5 border border-indigo-900/40 shadow-sm space-y-3">
-                        <div class="flex items-center justify-between border-b border-slate-800 pb-2">
-                            <h3 class="font-bold text-xs uppercase tracking-wider text-indigo-400 flex items-center gap-1.5">
-                                <i data-lucide="zap" class="w-4 h-4 text-indigo-400"></i> Pintasan Hari Ini
-                            </h3>
-                            <span id="badgeTodayDate" class="text-[10px] font-mono text-slate-400">--</span>
-                        </div>
-                        <div id="dashboardTodayShortcuts" class="space-y-2 max-h-40 overflow-y-auto custom-scrollbar text-xs">
-                            <p class="text-slate-400 text-center py-2">Memuat agenda & tugas hari ini...</p>
-                        </div>
-                    </div>
-
-                    <!-- Pintasan Besok -->
-                    <div class="bg-[#0f172a] rounded-3xl p-4 sm:p-5 border border-purple-900/40 shadow-sm space-y-3">
-                        <div class="flex items-center justify-between border-b border-slate-800 pb-2">
-                            <h3 class="font-bold text-xs uppercase tracking-wider text-purple-400 flex items-center gap-1.5">
-                                <i data-lucide="calendar-plus" class="w-4 h-4 text-purple-400"></i> Pintasan Besok
-                            </h3>
-                            <span id="badgeTomorrowDate" class="text-[10px] font-mono text-slate-400">--</span>
-                        </div>
-                        <div id="dashboardTomorrowShortcuts" class="space-y-2 max-h-40 overflow-y-auto custom-scrollbar text-xs">
-                            <p class="text-slate-400 text-center py-2">Memuat agenda & tugas besok...</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- STATS GRID -->
-                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-                    <div class="bg-[#0f172a] p-4 sm:p-5 rounded-2xl border border-blue-900/40 shadow-sm flex justify-between items-center relative overflow-hidden">
-                        <div class="relative z-10">
-                            <span class="text-[10px] uppercase font-bold text-blue-400 block mb-1">SELURUH TUGAS</span>
-                            <h4 id="statTotalTugas" class="text-xl sm:text-2xl font-black text-white">0</h4>
-                            <span id="statTugasPct" class="text-[11px] font-semibold text-blue-300">0% Terkumpul</span>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl p-4 sm:p-5 shadow-sm space-y-2">
+                        <div class="flex items-center justify-between text-slate-500 dark:text-slate-400">
+                            <span class="text-xs font-bold uppercase tracking-wider">Tugas Kuliah</span>
+                            <i data-lucide="check-square" class="w-4 h-4 text-amber-500 dark:text-amber-400"></i>
                         </div>
-                        <div class="p-3 bg-blue-950/90 text-blue-400 rounded-2xl border border-blue-800/50"><i data-lucide="file-text" class="w-5 h-5 sm:w-6 sm:h-6"></i></div>
+                        <h3 id="statTotalTugas" class="text-2xl font-black text-slate-900 dark:text-white">0</h3>
+                        <p id="statTugasPct" class="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold">0% Terkumpul</p>
                     </div>
-
-                    <div class="bg-[#0f172a] p-4 sm:p-5 rounded-2xl border border-pink-900/40 shadow-sm flex justify-between items-center relative overflow-hidden">
-                        <div class="relative z-10">
-                            <span class="text-[10px] uppercase font-bold text-pink-400 block mb-1">JUMLAH AGENDA</span>
-                            <h4 id="statTotalAgenda" class="text-xl sm:text-2xl font-black text-white">0</h4>
-                            <span id="statAgendaPending" class="text-[11px] font-semibold text-pink-300">0 Belum Terlaksana</span>
+                    <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl p-4 sm:p-5 shadow-sm space-y-2">
+                        <div class="flex items-center justify-between text-slate-500 dark:text-slate-400">
+                            <span class="text-xs font-bold uppercase tracking-wider">Agenda Kegiatan</span>
+                            <i data-lucide="calendar-days" class="w-4 h-4 text-pink-500 dark:text-pink-400"></i>
                         </div>
-                        <div class="p-3 bg-pink-950/90 text-pink-400 rounded-2xl border border-pink-800/50"><i data-lucide="calendar" class="w-5 h-5 sm:w-6 sm:h-6"></i></div>
+                        <h3 id="statTotalAgenda" class="text-2xl font-black text-slate-900 dark:text-white">0</h3>
+                        <p id="statAgendaPending" class="text-[11px] text-pink-600 dark:text-pink-400 font-semibold">0 Belum Terlaksana</p>
                     </div>
-
-                    <div class="bg-[#0f172a] p-4 sm:p-5 rounded-2xl border border-indigo-900/40 shadow-sm flex justify-between items-center relative overflow-hidden">
-                        <div class="relative z-10">
-                            <span class="text-[10px] uppercase font-bold text-indigo-400 block mb-1">NOTULENSI RAPAT</span>
-                            <h4 id="statTotalNotulensi" class="text-xl sm:text-2xl font-black text-white">0</h4>
-                            <span class="text-[11px] font-semibold text-indigo-300">Dokumen Rapat</span>
+                    <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl p-4 sm:p-5 shadow-sm space-y-2">
+                        <div class="flex items-center justify-between text-slate-500 dark:text-slate-400">
+                            <span class="text-xs font-bold uppercase tracking-wider">Notulensi Rapat</span>
+                            <i data-lucide="file-text" class="w-4 h-4 text-indigo-500 dark:text-indigo-400"></i>
                         </div>
-                        <div class="p-3 bg-indigo-950/90 text-indigo-400 rounded-2xl border border-indigo-800/50"><i data-lucide="file-spreadsheet" class="w-5 h-5 sm:w-6 sm:h-6"></i></div>
+                        <h3 id="statTotalNotulensi" class="text-2xl font-black text-slate-900 dark:text-white">0</h3>
+                        <p class="text-[11px] text-indigo-600 dark:text-indigo-400 font-semibold">Dokumen Disahkan</p>
                     </div>
-
-                    <div class="bg-[#0f172a] p-4 sm:p-5 rounded-2xl border border-emerald-900/40 shadow-sm flex justify-between items-center relative overflow-hidden">
-                        <div class="relative z-10">
-                            <span class="text-[10px] uppercase font-bold text-emerald-400 block mb-1">PEMASUKAN</span>
-                            <h4 id="statTotalIncome" class="text-xs sm:text-lg font-black text-emerald-400 truncate max-w-[110px]">Rp 0</h4>
-                            <span class="text-[11px] text-slate-400">Total Masuk</span>
+                    <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl p-4 sm:p-5 shadow-sm space-y-2">
+                        <div class="flex items-center justify-between text-slate-500 dark:text-slate-400">
+                            <span class="text-xs font-bold uppercase tracking-wider">Kas Organisasi</span>
+                            <i data-lucide="wallet" class="w-4 h-4 text-emerald-500 dark:text-emerald-400"></i>
                         </div>
-                        <div class="p-2.5 bg-emerald-950/90 text-emerald-400 rounded-2xl border border-emerald-800/50"><i data-lucide="arrow-down-left" class="w-5 h-5"></i></div>
+                        <h3 id="statTotalIncome" class="text-xl font-black text-slate-900 dark:text-white">Rp 0</h3>
+                        <p class="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold">Pemasukan Bersih</p>
                     </div>
                 </div>
 
-                <!-- KALENDER AKADEMIK -->
-                <div class="bg-[#0f172a] rounded-3xl p-4 sm:p-6 border border-slate-800 shadow-sm">
-                    <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
-                        <h3 class="font-bold text-sm text-slate-100 flex items-center gap-2">
-                            <i data-lucide="calendar-days" class="w-4 h-4 text-violet-400"></i> Kalender Akademik Interaktif
-                        </h3>
-                        <div class="flex items-center gap-2">
-                            <button onclick="changeMonth(-1)" class="p-1.5 bg-[#1a2647] hover:bg-slate-700 rounded-xl text-slate-300"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
-                            <span id="calendarMonthYear" class="text-xs font-bold text-violet-400 px-2">Januari 2026</span>
-                            <button onclick="changeMonth(1)" class="p-1.5 bg-[#1a2647] hover:bg-slate-700 rounded-xl text-slate-300"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+                <!-- PINTASAN HARI INI & BESOK -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl p-5 space-y-3 shadow-sm">
+                        <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+                            <h4 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                <i data-lucide="sun" class="w-4 h-4 text-amber-500 dark:text-amber-400"></i> Agenda & Tugas Hari Ini
+                            </h4>
+                            <span id="badgeTodayDate" class="text-[10px] font-mono bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-2 py-0.5 rounded">--</span>
+                        </div>
+                        <div id="dashboardTodayShortcuts" class="space-y-2">
+                            <p class="text-slate-500 dark:text-slate-400 text-center py-3">Tidak ada agenda atau tugas hari ini.</p>
                         </div>
                     </div>
-
-                    <div class="grid grid-cols-7 gap-1 sm:gap-2 mb-3 text-center text-[11px] font-semibold text-slate-400">
-                        <div>Mg</div><div>Sn</div><div>Sl</div><div>Rb</div><div>Km</div><div>Jm</div><div>Sb</div>
+                    <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl p-5 space-y-3 shadow-sm">
+                        <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+                            <h4 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                <i data-lucide="sunrise" class="w-4 h-4 text-indigo-500 dark:text-indigo-400"></i> Agenda & Tugas Besok
+                            </h4>
+                            <span id="badgeTomorrowDate" class="text-[10px] font-mono bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-2 py-0.5 rounded">--</span>
+                        </div>
+                        <div id="dashboardTomorrowShortcuts" class="space-y-2">
+                            <p class="text-slate-500 dark:text-slate-400 text-center py-3">Tidak ada agenda atau tugas besok.</p>
+                        </div>
                     </div>
-                    <div id="calendarGrid" class="grid grid-cols-7 gap-1 sm:gap-2 text-xs"></div>
+                </div>
+
+                <!-- WIDGET KALENDER MINI DI DASHBOARD -->
+                <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl p-5 space-y-4 shadow-sm">
+                    <div class="flex items-center justify-between">
+                        <h4 id="calendarMonthYear" class="text-sm font-bold text-slate-900 dark:text-white">Bulan Tahun</h4>
+                        <div class="flex gap-1">
+                            <button onclick="changeMonth(-1)" class="p-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl text-slate-600 dark:text-slate-300"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
+                            <button onclick="changeMonth(1)" class="p-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl text-slate-600 dark:text-slate-300"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-7 gap-1 text-center text-[10px] font-bold text-slate-500 dark:text-slate-400">
+                        <span>Min</span><span>Sen</span><span>Sel</span><span>Rabu</span><span>Kam</span><span>Jum</span><span>Sab</span>
+                    </div>
+                    <div id="calendarGrid" class="grid grid-cols-7 gap-1 text-center"></div>
                 </div>
             </section>
 
-            <!-- AGENDA VIEW -->
-            <section id="view-agenda" class="hidden space-y-6 animate-fade-in">
-                <div class="flex justify-between items-center flex-wrap gap-4">
+            <!-- VIEW 2: AGENDA -->
+            <section id="view-agenda" class="hidden space-y-5">
+                <div class="flex items-center justify-between flex-wrap gap-4">
                     <div>
-                        <h2 class="text-xl font-extrabold text-white">Manajemen Agenda</h2>
-                        <p class="text-xs text-slate-400">Atur jadwal pertemuan, kriteria, durasi, dan file penting.</p>
+                        <h3 class="text-base font-bold text-slate-900 dark:text-white">Manajemen Agenda Kegiatan</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Catat agenda organisasi atau kampus lengkap dengan lampiran file (Maks. 3MB).</p>
                     </div>
-                    <button onclick="openAgendaModal()" class="owner-only-btn bg-gradient-to-r from-pink-600 to-purple-600 text-white font-bold text-xs px-4 py-2.5 rounded-xl flex items-center gap-2 shadow-md">
+                    <button onclick="openAgendaModal()" class="bg-pink-600 hover:bg-pink-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-2 shadow-md">
                         <i data-lucide="plus" class="w-4 h-4"></i> Tambah Agenda
                     </button>
                 </div>
-                <div id="agendaGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5"></div>
+                <div id="agendaGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
             </section>
 
-            <!-- TUGAS VIEW -->
-            <section id="view-tugas" class="hidden space-y-6 animate-fade-in">
-                <div class="flex justify-between items-center flex-wrap gap-4">
+            <!-- VIEW 3: TUGAS KULIAH -->
+            <section id="view-tugas" class="hidden space-y-5">
+                <div class="flex items-center justify-between flex-wrap gap-4">
                     <div>
-                        <h2 class="text-xl font-extrabold text-white">Manajemen Tugas Kuliah</h2>
-                        <p class="text-xs text-slate-400">Pantau tenggat waktu, lampirkan file, dan status pengerjaan.</p>
+                        <h3 class="text-base font-bold text-slate-900 dark:text-white">Manajemen Tugas Kuliah</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Pantau deadline dan progress pengerjaan tugas kuliah Anda.</p>
                     </div>
-                    <button onclick="openTugasModal()" class="owner-only-btn bg-gradient-to-r from-amber-600 to-orange-600 text-white font-bold text-xs px-4 py-2.5 rounded-xl flex items-center gap-2 shadow-md">
+                    <button onclick="openTugasModal()" class="bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-2 shadow-md">
                         <i data-lucide="plus" class="w-4 h-4"></i> Tambah Tugas
                     </button>
                 </div>
-                <div id="tugasGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5"></div>
+                <div id="tugasGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
             </section>
 
-            <!-- NOTULENSI VIEW -->
-            <section id="view-notulensi" class="hidden space-y-6 animate-fade-in">
-                <div class="flex justify-between items-center flex-wrap gap-4">
+            <!-- VIEW 4: NOTULENSI RAPAT -->
+            <section id="view-notulensi" class="hidden space-y-5">
+                <div class="flex items-center justify-between flex-wrap gap-4">
                     <div>
-                        <h2 class="text-xl font-extrabold text-white">Notulensi Rapat & Diskusi</h2>
-                        <p class="text-xs text-slate-400">Catat rapat, pilih jenis tanda tangan (Manual/QR), & unduh dokumen.</p>
+                        <h3 class="text-base font-bold text-slate-900 dark:text-white">Notulensi Rapat & Pengesahan Dokumen</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Dokumentasikan rapat resmi dilengkapi tanda tangan digital, QR Code, dan rekaman video kamera.</p>
                     </div>
-                    <button onclick="openNotulensiModal()" class="owner-only-btn bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-bold text-xs px-4 py-2.5 rounded-xl flex items-center gap-2 shadow-md">
-                        <i data-lucide="plus" class="w-4 h-4"></i> Buat Notulensi
+                    <button onclick="openSelectSignModalForNew()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-2 shadow-md">
+                        <i data-lucide="plus" class="w-4 h-4"></i> Buat Notulensi Baru
                     </button>
                 </div>
-                <div id="notulensiGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5"></div>
+                <div id="notulensiGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
             </section>
 
-            <!-- KEUANGAN VIEW -->
-            <section id="view-keuangan" class="hidden space-y-6 animate-fade-in">
-                <div class="flex justify-between items-center flex-wrap gap-4">
+            <!-- VIEW 5: JADWAL KULIAH -->
+            <section id="view-jadwal" class="hidden space-y-5">
+                <div class="flex items-center justify-between flex-wrap gap-4">
                     <div>
-                        <h2 class="text-xl font-extrabold text-white">Manajemen Keuangan</h2>
-                        <p class="text-xs text-slate-400">Catat pemasukan dan pengeluaran.</p>
+                        <h3 class="text-base font-bold text-slate-900 dark:text-white">Jadwal Kuliah Mingguan</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Atur jadwal mata kuliah Anda setiap hari dalam seminggu.</p>
                     </div>
-                    <button onclick="openFinanceModal()" class="bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold text-xs px-4 py-2.5 rounded-xl flex items-center gap-2 shadow-md">
+                    <button onclick="openJadwalModal()" class="bg-cyan-600 hover:bg-cyan-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-2 shadow-md">
+                        <i data-lucide="plus" class="w-4 h-4"></i> Tambah Jadwal
+                    </button>
+                </div>
+                <div id="jadwalWeekGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+            </section>
+
+            <!-- VIEW 6: KEUANGAN -->
+            <section id="view-keuangan" class="hidden space-y-5">
+                <div class="flex items-center justify-between flex-wrap gap-4">
+                    <div>
+                        <h3 class="text-base font-bold text-slate-900 dark:text-white">Keuangan & Kas Organisasi</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Catat pemasukan dan pengeluaran kas dengan transparan.</p>
+                    </div>
+                    <button onclick="openFinanceModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-2 shadow-md">
                         <i data-lucide="plus" class="w-4 h-4"></i> Catat Transaksi
                     </button>
                 </div>
-                <div class="bg-[#0f172a] rounded-3xl p-4 sm:p-6 border border-slate-800 overflow-x-auto custom-scrollbar">
-                    <table class="w-full text-xs text-left min-w-[500px]">
-                        <thead class="text-slate-400 border-b border-slate-800">
-                            <tr>
-                                <th class="pb-3">Tanggal</th>
-                                <th class="pb-3">Ket</th>
-                                <th class="pb-3">Jenis</th>
-                                <th class="pb-3 text-right">Jumlah (Rp)</th>
-                                <th class="pb-3 text-center">Aksi</th>
+                <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-sm overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead>
+                            <tr class="border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400">
+                                <th class="pb-3 font-semibold">Tanggal</th>
+                                <th class="pb-3 font-semibold">Keterangan</th>
+                                <th class="pb-3 font-semibold">Jenis</th>
+                                <th class="pb-3 font-semibold text-right">Jumlah</th>
+                                <th class="pb-3 font-semibold text-center">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody id="financeTableBody" class="divide-y divide-slate-800/60"></tbody>
+                        <tbody id="financeTableBody" class="divide-y divide-slate-100 dark:divide-slate-800/60"></tbody>
                     </table>
                 </div>
             </section>
 
-            <!-- JADWAL KULIAH VIEW -->
-            <section id="view-jadwal" class="hidden space-y-6 animate-fade-in">
-                <div class="flex justify-between items-center flex-wrap gap-4">
-                    <div>
-                        <h2 class="text-xl font-extrabold text-white">Jadwal Kuliah Mingguan</h2>
-                        <p class="text-xs text-slate-400">Susunan mata kuliah harian, ruangan, dan dosen pengampu.</p>
-                    </div>
-                    <button onclick="openJadwalModal()" class="owner-only-btn bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-bold text-xs px-4 py-2.5 rounded-xl flex items-center gap-2 shadow-md">
-                        <i data-lucide="plus" class="w-4 h-4"></i> Tambah Matkul
-                    </button>
-                </div>
-                <div id="jadwalWeekGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"></div>
-            </section>
-
-            <!-- KALENDER VIEW -->
-            <section id="view-kalender" class="hidden space-y-6 animate-fade-in">
-                <div class="flex justify-between items-center flex-wrap gap-4">
-                    <div>
-                        <h2 class="text-xl font-extrabold text-white">Kalender Interaktif Lengkap</h2>
-                        <p class="text-xs text-slate-400">Klik tanggal untuk melihat rincian.</p>
-                    </div>
-                </div>
-                <div class="bg-[#0f172a] rounded-3xl p-4 sm:p-6 border border-slate-800">
-                    <div class="flex justify-between items-center mb-4 flex-wrap gap-2">
-                        <span id="calendarFullMonthYear" class="text-sm font-bold text-violet-400">November 2026</span>
+            <!-- VIEW 7: KALENDER FULL -->
+            <section id="view-kalender" class="hidden space-y-5">
+                <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl p-6 space-y-4 shadow-sm">
+                    <div class="flex items-center justify-between">
+                        <h3 id="calendarFullMonthYear" class="text-base font-bold text-slate-900 dark:text-white">Bulan Tahun</h3>
                         <div class="flex gap-2">
-                            <button onclick="changeMonth(-1)" class="p-2 bg-[#131d38] rounded-xl hover:bg-slate-700 text-slate-300"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
-                            <button onclick="changeMonth(1)" class="p-2 bg-[#131d38] rounded-xl hover:bg-slate-700 text-slate-300"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+                            <button onclick="changeMonth(-1)" class="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl text-slate-600 dark:text-slate-300 font-bold">Sebelumnya</button>
+                            <button onclick="changeMonth(1)" class="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl text-slate-600 dark:text-slate-300 font-bold">Berikutnya</button>
                         </div>
                     </div>
-                    <div class="grid grid-cols-7 gap-1 sm:gap-2 mb-2 text-center text-xs font-semibold text-slate-400">
-                        <div>Ming</div><div>Sen</div><div>Sel</div><div>Rab</div><div>Kam</div><div>Jum</div><div>Sab</div>
+                    <div class="grid grid-cols-7 gap-2 text-center text-xs font-bold text-slate-500 dark:text-slate-400">
+                        <span>Minggu</span><span>Senin</span><span>Selasa</span><span>Rabu</span><span>Kamis</span><span>Jumat</span><span>Sabtu</span>
                     </div>
-                    <div id="calendarFullGrid" class="grid grid-cols-7 gap-1 sm:gap-2"></div>
+                    <div id="calendarFullGrid" class="grid grid-cols-7 gap-2"></div>
                 </div>
             </section>
 
-            <!-- SETTINGS VIEW -->
-            <section id="view-settings" class="hidden space-y-6 max-w-2xl mx-auto animate-fade-in">
-                <div>
-                    <h2 class="text-xl font-extrabold text-white">Pengaturan Aplikasi</h2>
-                    <p class="text-xs text-slate-400">Tema visual, notifikasi, manajemen data, dan akun.</p>
-                </div>
-                <div class="bg-[#0f172a] rounded-3xl p-5 sm:p-6 border border-slate-800 space-y-6">
-                    <div class="flex items-center justify-between pb-6 border-b border-slate-800 flex-wrap gap-4">
-                        <div>
-                            <h4 class="text-sm font-bold text-white">Tema Visual Aplikasi</h4>
-                            <p class="text-xs text-slate-400">Beralih antara Mode Gelap (Dark) dan Terang (Light).</p>
-                        </div>
-                        <button onclick="toggleAppTheme()" id="themeToggleBtn" class="bg-violet-600 hover:bg-violet-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow-md">
-                            <span id="themeBtnText">Mode Gelap</span>
-                        </button>
+            <!-- VIEW 8: PENGATURAN & AUDIT NOTIFIKASI -->
+            <section id="view-pengaturan" class="hidden space-y-6">
+                <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl p-6 space-y-6 shadow-sm">
+                    <div>
+                        <h3 class="text-base font-bold text-slate-900 dark:text-white mb-1">Pengaturan & Audit Sistem</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Kelola preferensi notifikasi, audit log, serta backup dan pemulihan data aplikasi.</p>
                     </div>
 
-                    <!-- FITUR NOTIFIKASI & PANEL LAPORAN AUDIT -->
-                    <div class="space-y-4 pb-6 border-b border-slate-800">
-                        <div class="flex items-center justify-between flex-wrap gap-4">
+                    <!-- PENGATURAN NOTIFIKASI & AUDIT LOG -->
+                    <div class="space-y-4 pb-6 border-b border-slate-200 dark:border-slate-800">
+                        <h4 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                            <i data-lucide="bell-ring" class="w-4 h-4 text-violet-500 dark:text-violet-400"></i> Fitur Notifikasi & Audit Log Real-Time
+                        </h4>
+                        <div class="flex items-center justify-between flex-wrap gap-4 bg-slate-50 dark:bg-[#131d38] p-4 rounded-2xl border border-slate-200 dark:border-slate-700">
                             <div>
-                                <h4 class="text-sm font-bold text-white flex items-center gap-2">
-                                    <i data-lucide="bell" class="w-4 h-4 text-amber-400"></i> Pengaturan & Log Notifikasi
-                                </h4>
-                                <p class="text-xs text-slate-400">Kelola izin sistem pengingat otomatis dan tinjau status riwayat audit notifikasi.</p>
+                                <span class="text-xs font-bold text-slate-900 dark:text-white block">Status Notifikasi Push / Alarm</span>
+                                <span class="text-[11px] text-slate-500 dark:text-slate-400">Aktifkan untuk menerima pengingat agenda & tugas kuliah.</span>
                             </div>
-                            <div class="flex items-center gap-2">
-                                <button onclick="toggleNotificationsFeature()" id="notifToggleBtn" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow-md">
-                                    <span id="notifBtnText">Aktifkan Notifikasi</span>
-                                </button>
-                                <button onclick="triggerAuditNotification()" class="bg-violet-600 hover:bg-violet-700 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl transition shadow-md flex items-center gap-1.5">
-                                    <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Tes Audit
-                                </button>
-                            </div>
+                            <button id="notifToggleBtn" onclick="toggleNotificationsFeature()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow-md">
+                                <span id="notifBtnText">Aktifkan Notifikasi</span>
+                            </button>
                         </div>
 
-                        <!-- Bagian Laporan Audit Notifikasi -->
-                        <div class="bg-[#131d38] p-4 rounded-2xl border border-slate-700/80 space-y-3">
-                            <div class="flex items-center justify-between border-b border-slate-700 pb-2">
-                                <span class="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center gap-1.5">
-                                    <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i> Laporan Audit Status Notifikasi
-                                </span>
-                                <span id="auditTimestamp" class="text-[10px] font-mono text-slate-400">Terakhir diperiksa: Baru saja</span>
+                        <!-- PANEL AUDIT LOG MONITOR -->
+                        <div class="bg-slate-50 dark:bg-[#131d38] p-4 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-3">
+                            <div class="flex items-center justify-between flex-wrap gap-2 border-b border-slate-200 dark:border-slate-800 pb-2">
+                                <div class="flex items-center gap-2">
+                                    <i data-lucide="shield-check" class="w-4 h-4 text-indigo-500 dark:text-indigo-400"></i>
+                                    <span class="text-xs font-bold text-slate-900 dark:text-white">Log Laporan Audit Notifikasi</span>
+                                </div>
+                                <span id="auditTimestamp" class="text-[10px] font-mono text-slate-500 dark:text-slate-400">Terakhir diperiksa: --:--:--</span>
                             </div>
-
-                            <div class="grid grid-cols-3 gap-2 text-center py-1">
-                                <div class="bg-[#0f172a] p-2.5 rounded-xl border border-slate-700/50">
-                                    <span class="text-[9px] uppercase font-bold text-slate-400 block">Total Kirim</span>
-                                    <span id="auditTotalSent" class="text-sm font-black text-white">0</span>
+                            <div class="grid grid-cols-3 gap-2 text-center text-xs font-mono">
+                                <div class="bg-white dark:bg-[#0f172a] p-2 rounded-xl border border-slate-200 dark:border-slate-800">
+                                    <span class="text-slate-500 dark:text-slate-400 block text-[10px]">Total Log</span>
+                                    <span id="auditTotalSent" class="font-bold text-slate-900 dark:text-white text-sm">0</span>
                                 </div>
-                                <div class="bg-[#0f172a] p-2.5 rounded-xl border border-slate-700/50">
-                                    <span class="text-[9px] uppercase font-bold text-slate-400 block">Berhasil</span>
-                                    <span id="auditTotalSuccess" class="text-sm font-black text-emerald-400">0</span>
+                                <div class="bg-white dark:bg-[#0f172a] p-2 rounded-xl border border-slate-200 dark:border-slate-800">
+                                    <span class="text-slate-500 dark:text-slate-400 block text-[10px]">Berhasil</span>
+                                    <span id="auditTotalSuccess" class="font-bold text-emerald-600 dark:text-emerald-400 text-sm">0</span>
                                 </div>
-                                <div class="bg-[#0f172a] p-2.5 rounded-xl border border-slate-700/50">
-                                    <span class="text-[9px] uppercase font-bold text-slate-400 block">Gagal / Tertahan</span>
-                                    <span id="auditTotalFailed" class="text-sm font-black text-rose-400">0</span>
+                                <div class="bg-white dark:bg-[#0f172a] p-2 rounded-xl border border-slate-200 dark:border-slate-800">
+                                    <span class="text-slate-500 dark:text-slate-400 block text-[10px]">Gagal / Peringatan</span>
+                                    <span id="auditTotalFailed" class="font-bold text-rose-600 dark:text-rose-400 text-sm">0</span>
                                 </div>
                             </div>
-
-                            <div class="space-y-1.5">
-                                <div class="flex justify-between text-[11px] text-slate-400 font-medium">
-                                    <span>Log Riwayat Pengiriman Terakhir:</span>
-                                    <button onclick="clearNotificationLogs()" class="text-rose-400 hover:underline">Bersihkan Log</button>
-                                </div>
-                                <div id="notificationAuditLogsList" class="space-y-1.5 max-h-36 overflow-y-auto custom-scrollbar text-[11px] font-mono">
-                                    <div class="p-2 bg-[#0f172a] rounded-xl text-slate-400 text-center">Belum ada riwayat log notifikasi tercatat.</div>
-                                </div>
+                            <div class="flex justify-between items-center pt-1">
+                                <button onclick="triggerAuditNotification()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3 py-1.5 rounded-xl transition flex items-center gap-1.5">
+                                    <i data-lucide="play-circle" class="w-3.5 h-3.5"></i> Jalankan Tes Audit
+                                </button>
+                                <button onclick="clearNotificationLogs()" class="text-rose-500 dark:text-rose-400 hover:underline text-xs font-semibold">Bersihkan Log</button>
+                            </div>
+                            <div id="notificationAuditLogsList" class="space-y-1.5 max-h-36 overflow-y-auto custom-scrollbar text-[11px] font-mono">
+                                <div class="p-2 bg-white dark:bg-[#0f172a] rounded-xl text-slate-500 dark:text-slate-400 text-center">Belum ada riwayat log notifikasi tercatat.</div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="space-y-3 pb-6 border-b border-slate-800">
-                        <h4 class="text-sm font-bold text-white">Cadangan & Pemulihan Data (JSON)</h4>
+                    <!-- BACKUP & RESTORE JSON -->
+                    <div class="space-y-3 pb-6 border-b border-slate-200 dark:border-slate-800">
+                        <h4 class="text-sm font-bold text-slate-900 dark:text-white">Cadangan & Pemulihan Data (JSON)</h4>
                         <div class="flex gap-3 flex-wrap">
                             <button onclick="exportData()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition flex items-center gap-2 shadow-md">
                                 <i data-lucide="download" class="w-4 h-4"></i> Ekspor Data
@@ -537,10 +418,10 @@
 
                     <div class="flex items-center justify-between flex-wrap gap-4 pt-2">
                         <div>
-                            <h4 class="text-sm font-bold text-rose-400">Keluar Sesi Akun</h4>
-                            <p class="text-xs text-slate-400">Akhiri sesi saat ini dan kembali ke halaman login.</p>
+                            <h4 class="text-sm font-bold text-rose-600 dark:text-rose-400">Keluar Sesi Akun</h4>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">Akhiri sesi saat ini dan kembali ke halaman login.</p>
                         </div>
-                        <button onclick="logout()" class="bg-rose-950/70 hover:bg-rose-900 text-rose-400 border border-rose-800/60 text-xs font-bold px-4 py-2.5 rounded-xl transition flex items-center gap-2 shadow-md">
+                        <button onclick="logout()" class="bg-rose-100 dark:bg-rose-950/70 hover:bg-rose-200 dark:hover:bg-rose-900 text-rose-600 dark:text-rose-400 border border-rose-300 dark:border-rose-800/60 text-xs font-bold px-4 py-2.5 rounded-xl transition flex items-center gap-2 shadow-md">
                             <i data-lucide="log-out" class="w-4 h-4"></i> Keluar Akun
                         </button>
                     </div>
@@ -549,105 +430,100 @@
         </main>
     </div>
 
-    <!-- MODAL SIGNATURE CANVAS (MANUAL) -->
-    <div id="modalSignatureManual" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4 overflow-y-auto">
-        <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl text-xs space-y-4 my-auto">
-            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                <h3 class="text-sm font-bold text-white flex items-center gap-2">
-                    <i data-lucide="pen-tool" class="w-4 h-4 text-indigo-400"></i> Tanda Tangan Basah (Manual)
+    <!-- MODAL SETUP TANDA TANGAN (MANUAL DRAWING) -->
+    <div id="modalSetupManualSign" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl text-xs space-y-4 my-auto">
+            <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-3">
+                <h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                    <i data-lucide="pen-tool" class="w-4 h-4 text-indigo-500 dark:text-indigo-400"></i> Buat Tanda Tangan Manual
                 </h3>
-                <button onclick="closeManualSignatureModal()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+                <button onclick="closeSetupManualSign()" class="text-slate-400 hover:text-slate-900 dark:hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
             <div>
-                <label class="font-semibold block mb-1 text-slate-300">Nama Lengkap Penanda Tangan</label>
-                <input type="text" id="manualSignerName" placeholder="Masukkan nama Anda..." class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white mb-3">
+                <label class="font-semibold block mb-1 text-slate-700 dark:text-slate-300">Nama Lengkap Penanda Tangan</label>
+                <input type="text" id="setupManualSignerName" placeholder="Masukkan nama Anda..." class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white mb-3">
             </div>
-            <p class="text-slate-400 text-[11px]">Coret tanda tangan di bawah ini:</p>
-            <div class="bg-white rounded-2xl p-2 border border-slate-700 relative overflow-hidden flex justify-center">
+            <p class="text-slate-500 dark:text-slate-400 text-[11px]">Coret tanda tangan di bawah ini:</p>
+            <div class="bg-white rounded-2xl p-2 border border-slate-300 dark:border-slate-700 relative overflow-hidden flex justify-center">
                 <canvas id="sigCanvas" width="350" height="130" class="cursor-crosshair w-full touch-none bg-white rounded-xl"></canvas>
             </div>
             <div class="flex justify-between items-center pt-2">
-                <button type="button" onclick="clearSignature()" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-rose-400 font-semibold">Bersihkan</button>
+                <button type="button" onclick="clearSignature()" class="px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-rose-600 dark:text-rose-400 font-semibold">Bersihkan</button>
                 <div class="flex gap-2">
-                    <button type="button" onclick="closeManualSignatureModal()" class="px-3 py-2 rounded-xl border border-slate-700 text-slate-300">Batal</button>
-                    <button type="button" onclick="confirmManualSignatureAndDownload()" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold">Unduh PDF (Manual)</button>
+                    <button type="button" onclick="closeSetupManualSign()" class="px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-300">Batal</button>
+                    <button type="button" onclick="proceedToNotulensiFormAfterManual()" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold">Lanjutkan</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- MODAL SIGNATURE DIGITAL (QR) -->
-    <div id="modalSignatureQR" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4 overflow-y-auto">
-        <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl text-xs space-y-4 my-auto">
-            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                <h3 class="text-sm font-bold text-white flex items-center gap-2">
-                    <i data-lucide="qr-code" class="w-4 h-4 text-violet-400"></i> Tanda Tangan Elektronik (QR) & Unduh Dokumen
+    <!-- MODAL SETUP TANDA TANGAN (DIGITAL / QR) -->
+    <div id="modalSetupQRSign" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white dark:bg-[#0f172a] border border-violet-200 dark:border-violet-900/60 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl text-xs space-y-4 my-auto relative overflow-hidden">
+            <div class="absolute -top-10 -right-10 w-32 h-32 bg-violet-600/10 rounded-full blur-2xl"></div>
+            
+            <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-3 relative z-10">
+                <h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                    <i data-lucide="qr-code" class="w-4 h-4 text-violet-500 dark:text-violet-400"></i> Setup Tanda Tangan QR & Digital
                 </h3>
-                <button onclick="closeQRSignatureModal()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+                <button onclick="closeSetupQRSign()" class="text-slate-400 hover:text-slate-900 dark:hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
-            <div class="space-y-3">
-                <div>
-                    <label class="font-semibold block mb-1 text-slate-300">Unggah Gambar QR Code (JPG / PNG)</label>
-                    <input type="file" id="qrImageFileInput" accept="image/jpeg, image/png, image/jpg" onchange="handleQRImageUpload(event)" class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2 text-slate-300 file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-violet-600 file:text-white hover:file:bg-violet-700 cursor-pointer">
-                    <div id="qrUploadPreviewBox" class="hidden mt-2 flex justify-center bg-white p-2 rounded-xl border border-slate-700 w-24 mx-auto">
-                        <img id="qrUploadPreviewImg" src="" alt="Preview QR" class="w-20 h-20 object-contain">
+
+            <div class="space-y-3 relative z-10">
+                <div class="bg-slate-50 dark:bg-[#131d38] p-4 rounded-2xl border border-violet-200 dark:border-violet-900/40 text-center space-y-3">
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-violet-600 dark:text-violet-400 block">Pratinjau Kode QR Digital Otomatis</span>
+                    <div class="bg-white p-2.5 rounded-xl inline-block border border-slate-300 dark:border-slate-700 shadow-inner">
+                        <canvas id="qrCodeCanvas" class="w-24 h-24 block mx-auto"></canvas>
                     </div>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400">Kode QR di atas dibuat secara dinamis berdasarkan data penanda tangan digital.</p>
+                </div>
+
+                <div>
+                    <label class="font-semibold block mb-1 text-slate-700 dark:text-slate-300">Nama Lengkap Penanda Tangan</label>
+                    <input type="text" id="setupQrSignerName" oninput="generateDynamicQR()" placeholder="Nama lengkap..." class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white">
                 </div>
                 <div>
-                    <label class="font-semibold block mb-1 text-slate-300">Nama Lengkap</label>
-                    <input type="text" id="qrSignerName" placeholder="Nama lengkap..." class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white">
-                </div>
-                <div>
-                    <label class="font-semibold block mb-1 text-slate-300">ID / No. HP</label>
-                    <input type="text" id="qrSignerID" placeholder="08xxxxxxxxxx" class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white">
+                    <label class="font-semibold block mb-1 text-slate-700 dark:text-slate-300">ID Digital / No. HP / NIP</label>
+                    <input type="text" id="setupQrSignerID" oninput="generateDynamicQR()" placeholder="ID Unik / 08xxxxxxxxxx" class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white">
                 </div>
                 <div class="flex items-center gap-2 pt-1">
-                    <input type="checkbox" id="qrConsentCheck" class="w-4 h-4 rounded bg-[#131d38] border-slate-700 text-violet-600">
-                    <label for="qrConsentCheck" class="text-slate-300 text-[11px]">Saya menyetujui validitas tanda tangan elektronik ini secara sah.</label>
-                </div>
-                <div class="pt-2">
-                    <label class="font-semibold block mb-1.5 text-slate-300">Pilih Format Unduhan:</label>
-                    <div class="grid grid-cols-2 gap-2">
-                        <button type="button" onclick="confirmQRSignatureAndDownload('pdf')" class="py-2.5 px-3 rounded-xl bg-violet-600 hover:bg-violet-700 text-white font-bold flex items-center justify-center gap-1.5 shadow-md">
-                            <i data-lucide="file-down" class="w-4 h-4"></i> Unduh PDF
-                        </button>
-                        <button type="button" onclick="confirmQRSignatureAndDownload('word')" class="py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold flex items-center justify-center gap-1.5 shadow-md">
-                            <i data-lucide="file-text" class="w-4 h-4"></i> Unduh Word (.doc)
-                        </button>
-                    </div>
+                    <input type="checkbox" id="setupQrConsent" class="w-4 h-4 rounded bg-slate-50 dark:bg-[#131d38] border-slate-300 dark:border-slate-700 text-violet-600">
+                    <label for="setupQrConsent" class="text-slate-600 dark:text-slate-300 text-[11px]">Saya menyetujui pengesahan dokumen melalui Tanda Tangan Digital & QR ini.</label>
                 </div>
             </div>
-            <div class="flex justify-end pt-2 border-t border-slate-800">
-                <button type="button" onclick="closeQRSignatureModal()" class="px-3 py-1.5 rounded-xl border border-slate-700 text-slate-300">Batal</button>
+
+            <div class="flex justify-end gap-2 pt-2 border-t border-slate-200 dark:border-slate-800 relative z-10">
+                <button type="button" onclick="closeSetupQRSign()" class="px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-300">Batal</button>
+                <button type="button" onclick="proceedToNotulensiFormAfterQR()" class="px-4 py-2 rounded-xl bg-violet-600 hover:bg-violet-700 text-white font-bold">Simpan & Lanjutkan</button>
             </div>
         </div>
     </div>
 
     <!-- MODAL PILIH JENIS TANDA TANGAN -->
     <div id="modalSelectSignType" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-sm w-full p-6 shadow-2xl text-xs space-y-4 my-auto text-center">
-            <h3 class="text-sm font-bold text-white mb-1">Pilih Metode Tanda Tangan</h3>
-            <p class="text-slate-400 text-[11px] mb-4">Pilih jenis pengesahan dokumen notulensi yang diinginkan.</p>
+        <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl max-w-sm w-full p-6 shadow-2xl text-xs space-y-4 my-auto text-center">
+            <h3 class="text-sm font-bold text-slate-900 dark:text-white mb-1">Pilih Metode Tanda Tangan</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-[11px] mb-4">Pilih jenis pengesahan dokumen sebelum mengisi notulensi rapat.</p>
             <div class="space-y-3">
-                <button onclick="chooseSignManual()" class="w-full p-3 bg-[#131d38] hover:bg-slate-800 border border-slate-700 rounded-2xl text-white font-bold flex items-center justify-center gap-2 transition">
-                    <i data-lucide="pen-tool" class="w-4 h-4 text-indigo-400"></i> Tanda Tangan Manual (Basah)
+                <button onclick="selectSignTypeManual()" class="w-full p-3 bg-slate-50 dark:bg-[#131d38] hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-slate-900 dark:text-white font-bold flex items-center justify-center gap-2 transition">
+                    <i data-lucide="pen-tool" class="w-4 h-4 text-indigo-500 dark:text-indigo-400"></i> Tanda Tangan Manual (Basah)
                 </button>
-                <button onclick="chooseSignQR()" class="w-full p-3 bg-[#131d38] hover:bg-slate-800 border border-slate-700 rounded-2xl text-white font-bold flex items-center justify-center gap-2 transition">
-                    <i data-lucide="qr-code" class="w-4 h-4 text-violet-400"></i> Tanda Tangan Digital (QR Code)
+                <button onclick="selectSignTypeQR()" class="w-full p-3 bg-slate-50 dark:bg-[#131d38] hover:bg-slate-100 dark:hover:bg-slate-800 border border-violet-200 dark:border-violet-900/50 rounded-2xl text-slate-900 dark:text-white font-bold flex items-center justify-center gap-2 transition">
+                    <i data-lucide="qr-code" class="w-4 h-4 text-violet-500 dark:text-violet-400"></i> Fitur Tanda Tangan QR & Digital
                 </button>
             </div>
-            <button onclick="document.getElementById('modalSelectSignType').classList.add('hidden')" class="text-slate-500 hover:text-slate-300 pt-2 text-[11px]">Batal</button>
+            <button onclick="document.getElementById('modalSelectSignType').classList.add('hidden')" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 pt-2 text-[11px]">Batal</button>
         </div>
     </div>
 
     <!-- MODAL LIVE CAMERA & VIDEO STREAM -->
     <div id="modalLiveCamera" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden flex items-center justify-center p-4 overflow-y-auto">
-        <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-lg w-full p-5 sm:p-6 shadow-2xl text-xs space-y-4 my-auto text-center">
-            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                <h3 id="liveCameraTitle" class="text-sm font-bold text-white flex items-center gap-2">
-                    <i data-lucide="camera" class="w-4 h-4 text-indigo-400"></i> Kamera Real-Time
+        <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl max-w-lg w-full p-5 sm:p-6 shadow-2xl text-xs space-y-4 my-auto text-center">
+            <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-3">
+                <h3 id="liveCameraTitle" class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                    <i data-lucide="camera" class="w-4 h-4 text-indigo-500 dark:text-indigo-400"></i> Kamera Real-Time
                 </h3>
-                <button onclick="closeLiveCameraModal()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+                <button onclick="closeLiveCameraModal()" class="text-slate-400 hover:text-slate-900 dark:hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
             <div class="relative bg-black rounded-2xl overflow-hidden border border-slate-700 aspect-video flex items-center justify-center">
                 <video id="liveVideoElement" autoplay playsinline muted class="w-full h-full object-cover"></video>
@@ -662,31 +538,31 @@
                 <button type="button" id="btnRecordVideo" onclick="toggleVideoRecording()" class="px-4 py-2.5 rounded-xl bg-violet-600 hover:bg-violet-700 text-white font-bold flex items-center gap-2 shadow-md">
                     <i data-lucide="video" class="w-4 h-4"></i> <span id="recordVideoBtnText">Mulai Rekam Video</span>
                 </button>
-                <button type="button" onclick="closeLiveCameraModal()" class="px-4 py-2.5 rounded-xl border border-slate-700 text-slate-300 hover:bg-slate-800">Selesai / Tutup</button>
+                <button type="button" onclick="closeLiveCameraModal()" class="px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">Selesai / Tutup</button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL NOTULENSI -->
+    <!-- MODAL NOTULENSI (FORM UTAMA) -->
     <div id="modalNotulensi" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
-        <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-lg w-full p-5 sm:p-6 shadow-2xl text-xs space-y-4 my-auto max-h-[90vh] overflow-y-auto custom-scrollbar">
-            <h3 id="notulensiModalHeader" class="text-base font-bold text-white mb-2">Buat / Edit Notulensi Rapat</h3>
+        <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl max-w-lg w-full p-5 sm:p-6 shadow-2xl text-xs space-y-4 my-auto max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <h3 id="notulensiModalHeader" class="text-base font-bold text-slate-900 dark:text-white mb-2">Buat / Edit Notulensi Rapat</h3>
             <form onsubmit="saveNotulensi(event)" class="space-y-3">
                 <input type="hidden" id="notulensiId">
                 <div>
-                    <label class="font-semibold block mb-1 text-slate-300">Judul Rapat / Diskusi</label>
-                    <input type="text" id="notulensiJudul" required placeholder="Contoh: Rapat Koordinasi Panitia" class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white">
+                    <label class="font-semibold block mb-1 text-slate-700 dark:text-slate-300">Judul Rapat / Diskusi</label>
+                    <input type="text" id="notulensiJudul" required placeholder="Contoh: Rapat Koordinasi Panitia" class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white">
                 </div>
                 <div>
-                    <label class="font-semibold block mb-1 text-slate-300">Tanggal Rapat</label>
-                    <input type="date" id="notulensiTanggal" required class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white">
+                    <label class="font-semibold block mb-1 text-slate-700 dark:text-slate-300">Tanggal Rapat</label>
+                    <input type="date" id="notulensiTanggal" required class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white">
                 </div>
                 <div>
-                    <label class="font-semibold block mb-1 text-slate-300">Poin Pembahasan / Agenda</label>
-                    <textarea id="notulensiPembahasan" rows="4" required placeholder="Tuliskan isi pembahasan rapat..." class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white resize-none custom-scrollbar"></textarea>
+                    <label class="font-semibold block mb-1 text-slate-700 dark:text-slate-300">Poin Pembahasan / Agenda</label>
+                    <textarea id="notulensiPembahasan" rows="4" required placeholder="Tuliskan isi pembahasan rapat..." class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white resize-none custom-scrollbar"></textarea>
                 </div>
-                <div class="p-3 bg-[#131d38] rounded-2xl border border-slate-700 space-y-2">
-                    <label class="font-bold block text-indigo-400 flex items-center gap-1.5">
+                <div class="p-3 bg-slate-50 dark:bg-[#131d38] rounded-2xl border border-slate-200 dark:border-slate-700 space-y-2">
+                    <label class="font-bold block text-indigo-600 dark:text-indigo-400 flex items-center gap-1.5">
                         <i data-lucide="camera" class="w-4 h-4"></i> Ambil Foto / Rekam Video Real-Time Kamera
                     </label>
                     <div class="flex gap-2 flex-wrap pt-1">
@@ -697,115 +573,113 @@
                     <div id="mediaPreviewContainer" class="mt-2 flex gap-2 flex-wrap"></div>
                 </div>
                 <div class="flex justify-end gap-2 pt-3">
-                    <button type="button" onclick="closeNotulensiModal()" class="px-4 py-2 rounded-xl border border-slate-700 text-slate-300">Batal</button>
+                    <button type="button" onclick="closeNotulensiModal()" class="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300">Batal</button>
                     <button type="submit" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold">Simpan Notulensi</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- MODAL AGENDA (DENGAN INPUT FILE PDF/JPG MAKSIMAL 3MB) -->
+    <!-- MODAL AGENDA -->
     <div id="modalAgenda" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
-        <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl text-xs space-y-4 my-auto max-h-[90vh] overflow-y-auto custom-scrollbar">
-            <h3 id="agendaModalHeader" class="text-base font-bold text-white mb-2">Tambah / Edit Agenda</h3>
+        <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl text-xs space-y-4 my-auto max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <h3 id="agendaModalHeader" class="text-base font-bold text-slate-900 dark:text-white mb-2">Tambah / Edit Agenda</h3>
             <form onsubmit="saveAgenda(event)" class="space-y-3">
                 <input type="hidden" id="agendaId">
-                <div><label class="font-semibold block mb-1 text-slate-300">Nama Agenda</label><input type="text" id="agendaNama" required class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white"></div>
-                <div><label class="font-semibold block mb-1 text-slate-300">Lokasi</label><input type="text" id="agendaLokasi" required class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white"></div>
+                <div><label class="font-semibold block mb-1 text-slate-700 dark:text-slate-300">Nama Agenda</label><input type="text" id="agendaNama" required class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white"></div>
+                <div><label class="font-semibold block mb-1 text-slate-700 dark:text-slate-300">Lokasi</label><input type="text" id="agendaLokasi" required class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white"></div>
                 <div class="grid grid-cols-2 gap-3">
-                    <div><label class="font-semibold block mb-1 text-slate-300">Kriteria</label><select id="agendaKriteria" class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white"><option value="Umum">Umum</option><option value="Khusus">Khusus</option><option value="Tugas">Tugas</option></select></div>
-                    <div><label class="font-semibold block mb-1 text-slate-300">Status</label><select id="agendaStatus" class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white"><option value="Belum Terlaksana">Belum Terlaksana</option><option value="Terlaksana">Terlaksana</option></select></div>
+                    <div><label class="font-semibold block mb-1 text-slate-700 dark:text-slate-300">Kriteria</label><select id="agendaKriteria" class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white"><option value="Umum">Umum</option><option value="Khusus">Khusus</option><option value="Tugas">Tugas</option></select></div>
+                    <div><label class="font-semibold block mb-1 text-slate-700 dark:text-slate-300">Status</label><select id="agendaStatus" class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white"><option value="Belum Terlaksana">Belum Terlaksana</option><option value="Terlaksana">Terlaksana</option></select></div>
                 </div>
                 <div class="grid grid-cols-3 gap-3">
-                    <div><label class="font-semibold block mb-1 text-slate-300">Tanggal</label><input type="date" id="agendaTanggal" required class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white"></div>
-                    <div><label class="font-semibold block mb-1 text-slate-300">Jam</label><input type="time" id="agendaJam" required class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white"></div>
-                    <div><label class="font-semibold block mb-1 text-slate-300">Durasi (Jam)</label><input type="number" id="agendaDurasi" step="any" min="0" class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white"></div>
+                    <div><label class="font-semibold block mb-1 text-slate-700 dark:text-slate-300">Tanggal</label><input type="date" id="agendaTanggal" required class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white"></div>
+                    <div><label class="font-semibold block mb-1 text-slate-700 dark:text-slate-300">Jam</label><input type="time" id="agendaJam" required class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white"></div>
+                    <div><label class="font-semibold block mb-1 text-slate-700 dark:text-slate-300">Durasi (Jam)</label><input type="number" id="agendaDurasi" step="any" min="0" class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white"></div>
                 </div>
                 <div>
-                    <label class="font-semibold block mb-1 text-slate-300">Lampiran File (PDF / JPG / PNG - Maks. 3MB)</label>
-                    <input type="file" id="agendaFile" accept=".pdf,image/jpeg,image/png,image/jpg" onchange="handleAgendaFileUpload(event)" class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2 text-slate-300 file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-pink-600 file:text-white hover:file:bg-pink-700 cursor-pointer">
-                    <p id="agendaFileError" class="text-[10px] text-rose-400 mt-1 hidden"></p>
+                    <label class="font-semibold block mb-1 text-slate-700 dark:text-slate-300">Lampiran File (PDF / JPG / PNG - Maks. 3MB)</label>
+                    <input type="file" id="agendaFile" accept=".pdf,image/jpeg,image/png,image/jpg" onchange="handleAgendaFileUpload(event)" class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2 text-slate-600 dark:text-slate-300 file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-pink-600 file:text-white hover:file:bg-pink-700 cursor-pointer">
+                    <p id="agendaFileError" class="text-[10px] text-rose-500 dark:text-rose-400 mt-1 hidden"></p>
                 </div>
-                <div class="flex justify-end gap-2 pt-3"><button type="button" onclick="closeAgendaModal()" class="px-4 py-2 rounded-xl border border-slate-700 text-slate-300">Batal</button><button type="submit" class="px-4 py-2 rounded-xl bg-pink-600 text-white font-bold">Simpan</button></div>
+                <div class="flex justify-end gap-2 pt-3"><button type="button" onclick="closeAgendaModal()" class="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300">Batal</button><button type="submit" class="px-4 py-2 rounded-xl bg-pink-600 text-white font-bold">Simpan</button></div>
             </form>
         </div>
     </div>
 
     <!-- MODAL PRATINJAU FILE AGENDA -->
     <div id="modalAgendaFilePreview" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4 overflow-y-auto">
-        <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-2xl w-full p-5 sm:p-6 shadow-2xl text-xs space-y-4 my-auto">
-            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                <h3 id="previewFileTitle" class="text-sm font-bold text-white flex items-center gap-2">
-                    <i data-lucide="file-text" class="w-4 h-4 text-pink-400"></i> Pratinjau Lampiran Agenda
+        <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl max-w-2xl w-full p-5 sm:p-6 shadow-2xl text-xs space-y-4 my-auto">
+            <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-3">
+                <h3 id="previewFileTitle" class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                    <i data-lucide="file-text" class="w-4 h-4 text-pink-500 dark:text-pink-400"></i> Pratinjau Lampiran Agenda
                 </h3>
-                <button onclick="closeAgendaFilePreview()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+                <button onclick="closeAgendaFilePreview()" class="text-slate-400 hover:text-slate-900 dark:hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
-            <div id="previewFileContainer" class="bg-black/40 rounded-2xl p-3 border border-slate-700 flex items-center justify-center min-h-[300px] max-h-[60vh] overflow-auto">
-                <!-- Konten dinamis untuk gambar atau PDF -->
-            </div>
-            <div class="flex justify-end gap-2 pt-2 border-t border-slate-800">
-                <button onclick="closeAgendaFilePreview()" class="px-4 py-2 rounded-xl border border-slate-700 text-slate-300">Tutup</button>
+            <div id="previewFileContainer" class="bg-slate-100 dark:bg-black/40 rounded-2xl p-3 border border-slate-300 dark:border-slate-700 flex items-center justify-center min-h-[300px] max-h-[60vh] overflow-auto"></div>
+            <div class="flex justify-end gap-2 pt-2 border-t border-slate-200 dark:border-slate-800">
+                <button onclick="closeAgendaFilePreview()" class="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300">Tutup</button>
             </div>
         </div>
     </div>
 
     <!-- MODAL TUGAS -->
     <div id="modalTugas" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
-        <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl text-xs space-y-4 my-auto max-h-[90vh] overflow-y-auto custom-scrollbar">
-            <h3 id="tugasModalHeader" class="text-base font-bold text-white mb-2">Tambah / Edit Tugas</h3>
+        <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl text-xs space-y-4 my-auto max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <h3 id="tugasModalHeader" class="text-base font-bold text-slate-900 dark:text-white mb-2">Tambah / Edit Tugas</h3>
             <form onsubmit="saveTugas(event)" class="space-y-3">
                 <input type="hidden" id="tugasId">
-                <div><label class="font-semibold block mb-1 text-slate-300">Nama Tugas</label><input type="text" id="tugasNama" required class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white"></div>
-                <div><label class="font-semibold block mb-1 text-slate-300">Dosen Pengampu</label><input type="text" id="tugasDosen" required class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white"></div>
-                <div><label class="font-semibold block mb-1 text-slate-300">Deadline Tanggal & Jam</label><input type="datetime-local" id="tugasDeadline" required class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white"></div>
+                <div><label class="font-semibold block mb-1 text-slate-700 dark:text-slate-300">Nama Tugas</label><input type="text" id="tugasNama" required class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white"></div>
+                <div><label class="font-semibold block mb-1 text-slate-700 dark:text-slate-300">Dosen Pengampu</label><input type="text" id="tugasDosen" required class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white"></div>
+                <div><label class="font-semibold block mb-1 text-slate-700 dark:text-slate-300">Deadline Tanggal & Jam</label><input type="datetime-local" id="tugasDeadline" required class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white"></div>
                 <div class="grid grid-cols-2 gap-3">
-                    <div><label class="font-semibold block mb-1 text-slate-300">Pengerjaan</label><select id="tugasPengerjaan" class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white"><option value="Belum dikerjakan">Belum dikerjakan</option><option value="Dalam proses">Dalam proses</option><option value="Selesai">Selesai</option></select></div>
-                    <div><label class="font-semibold block mb-1 text-slate-300">Status</label><select id="tugasStatus" class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white"><option value="Belum Terkumpul">Belum Terkumpul</option><option value="Terkumpul">Terkumpul</option></select></div>
+                    <div><label class="font-semibold block mb-1 text-slate-700 dark:text-slate-300">Pengerjaan</label><select id="tugasPengerjaan" class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white"><option value="Belum dikerjakan">Belum dikerjakan</option><option value="Dalam proses">Dalam proses</option><option value="Selesai">Selesai</option></select></div>
+                    <div><label class="font-semibold block mb-1 text-slate-700 dark:text-slate-300">Status</label><select id="tugasStatus" class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white"><option value="Belum Terkumpul">Belum Terkumpul</option><option value="Terkumpul">Terkumpul</option></select></div>
                 </div>
-                <div><label class="font-semibold block mb-1 text-slate-300">Catatan</label><textarea id="tugasCatatan" rows="2" class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white resize-none"></textarea></div>
-                <div class="flex justify-end gap-2 pt-3"><button type="button" onclick="closeTugasModal()" class="px-4 py-2 rounded-xl border border-slate-700 text-slate-300">Batal</button><button type="submit" class="px-4 py-2 rounded-xl bg-amber-600 text-white font-bold">Simpan</button></div>
+                <div><label class="font-semibold block mb-1 text-slate-700 dark:text-slate-300">Catatan</label><textarea id="tugasCatatan" rows="2" class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white resize-none"></textarea></div>
+                <div class="flex justify-end gap-2 pt-3"><button type="button" onclick="closeTugasModal()" class="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300">Batal</button><button type="submit" class="px-4 py-2 rounded-xl bg-amber-600 text-white font-bold">Simpan</button></div>
             </form>
         </div>
     </div>
 
     <!-- MODAL JADWAL KULIAH -->
     <div id="modalJadwal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
-        <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl text-xs space-y-4 my-auto max-h-[90vh] overflow-y-auto custom-scrollbar">
-            <h3 id="jadwalModalHeader" class="text-base font-bold text-white mb-2">Tambah / Edit Jadwal Kuliah</h3>
+        <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl text-xs space-y-4 my-auto max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <h3 id="jadwalModalHeader" class="text-base font-bold text-slate-900 dark:text-white mb-2">Tambah / Edit Jadwal Kuliah</h3>
             <form onsubmit="saveJadwal(event)" class="space-y-3">
                 <input type="hidden" id="jadwalId">
-                <div><label class="font-semibold block mb-1 text-slate-300">Hari</label><select id="jadwalHari" class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white"><option value="Senin">Senin</option><option value="Selasa">Selasa</option><option value="Rabu">Rabu</option><option value="Kamis">Kamis</option><option value="Jumat">Jumat</option><option value="Sabtu">Sabtu</option><option value="Minggu">Minggu</option></select></div>
-                <div><label class="font-semibold block mb-1 text-slate-300">Mata Kuliah</label><input type="text" id="jadwalMatkul" required class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white"></div>
+                <div><label class="font-semibold block mb-1 text-slate-700 dark:text-slate-300">Hari</label><select id="jadwalHari" class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white"><option value="Senin">Senin</option><option value="Selasa">Selasa</option><option value="Rabu">Rabu</option><option value="Kamis">Kamis</option><option value="Jumat">Jumat</option><option value="Sabtu">Sabtu</option><option value="Minggu">Minggu</option></select></div>
+                <div><label class="font-semibold block mb-1 text-slate-700 dark:text-slate-300">Mata Kuliah</label><input type="text" id="jadwalMatkul" required class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white"></div>
                 <div class="grid grid-cols-2 gap-3">
-                    <div><label class="font-semibold block mb-1 text-slate-300">Ruangan</label><input type="text" id="jadwalRuang" required class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white"></div>
-                    <div><label class="font-semibold block mb-1 text-slate-300">Jam (Format: 07.30 - 09.00)</label><input type="text" id="jadwalJam" required placeholder="07.30 - 09.00" class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white"></div>
+                    <div><label class="font-semibold block mb-1 text-slate-700 dark:text-slate-300">Ruangan</label><input type="text" id="jadwalRuang" required class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white"></div>
+                    <div><label class="font-semibold block mb-1 text-slate-700 dark:text-slate-300">Jam (Format: 07.30 - 09.00)</label><input type="text" id="jadwalJam" required placeholder="07.30 - 09.00" class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white"></div>
                 </div>
-                <div><label class="font-semibold block mb-1 text-slate-300">Dosen Pengampu</label><input type="text" id="jadwalDosen" required class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white"></div>
-                <div class="flex justify-end gap-2 pt-3"><button type="button" onclick="closeJadwalModal()" class="px-4 py-2 rounded-xl border border-slate-700 text-slate-300">Batal</button><button type="submit" class="px-4 py-2 rounded-xl bg-cyan-600 text-white font-bold">Simpan</button></div>
+                <div><label class="font-semibold block mb-1 text-slate-700 dark:text-slate-300">Dosen Pengampu</label><input type="text" id="jadwalDosen" required class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white"></div>
+                <div class="flex justify-end gap-2 pt-3"><button type="button" onclick="closeJadwalModal()" class="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300">Batal</button><button type="submit" class="px-4 py-2 rounded-xl bg-cyan-600 text-white font-bold">Simpan</button></div>
             </form>
         </div>
     </div>
 
     <!-- MODAL KEUANGAN -->
     <div id="modalFinance" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
-        <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl text-xs my-auto max-h-[90vh] overflow-y-auto custom-scrollbar">
-            <h3 class="text-base font-bold text-white mb-4">Catat Transaksi Keuangan</h3>
+        <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl text-xs my-auto max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <h3 class="text-base font-bold text-slate-900 dark:text-white mb-4">Catat Transaksi Keuangan</h3>
             <form onsubmit="saveFinance(event)" class="space-y-3">
-                <div><label class="font-semibold block mb-1 text-slate-300">Jenis</label><select id="finType" class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white"><option value="Pemasukan">Pemasukan (+)</option><option value="Pengeluaran">Pengeluaran (-)</option></select></div>
-                <div><label class="font-semibold block mb-1 text-slate-300">Keterangan</label><input type="text" id="finDesc" required class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white"></div>
-                <div><label class="font-semibold block mb-1 text-slate-300">Jumlah (Rp)</label><input type="number" id="finAmount" min="0" required class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white"></div>
-                <div><label class="font-semibold block mb-1 text-slate-300">Tanggal</label><input type="date" id="finDate" required class="w-full bg-[#131d38] border border-slate-700 rounded-xl p-2.5 text-white"></div>
-                <div class="flex justify-end gap-2 pt-3"><button type="button" onclick="closeFinanceModal()" class="px-4 py-2 rounded-xl border border-slate-700 text-slate-300">Batal</button><button type="submit" class="px-4 py-2 rounded-xl bg-emerald-600 text-white font-bold">Simpan</button></div>
+                <div><label class="font-semibold block mb-1 text-slate-700 dark:text-slate-300">Jenis</label><select id="finType" class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white"><option value="Pemasukan">Pemasukan (+)</option><option value="Pengeluaran">Pengeluaran (-)</option></select></div>
+                <div><label class="font-semibold block mb-1 text-slate-700 dark:text-slate-300">Keterangan</label><input type="text" id="finDesc" required class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white"></div>
+                <div><label class="font-semibold block mb-1 text-slate-700 dark:text-slate-300">Jumlah (Rp)</label><input type="number" id="finAmount" min="0" required class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white"></div>
+                <div><label class="font-semibold block mb-1 text-slate-700 dark:text-slate-300">Tanggal</label><input type="date" id="finDate" required class="w-full bg-slate-50 dark:bg-[#131d38] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-900 dark:text-white"></div>
+                <div class="flex justify-end gap-2 pt-3"><button type="button" onclick="closeFinanceModal()" class="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300">Batal</button><button type="submit" class="px-4 py-2 rounded-xl bg-emerald-600 text-white font-bold">Simpan</button></div>
             </form>
         </div>
     </div>
 
     <!-- MODAL DETAIL TANGGAL KALENDER -->
     <div id="modalCalendarDetail" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
-        <div class="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl my-auto">
+        <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl my-auto">
             <div class="flex justify-between items-center mb-4">
-                <h3 id="calDetailTitle" class="text-base font-bold text-white">Rincian Tanggal</h3>
-                <button onclick="closeCalendarDetailModal()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+                <h3 id="calDetailTitle" class="text-base font-bold text-slate-900 dark:text-white">Rincian Tanggal</h3>
+                <button onclick="closeCalendarDetailModal()" class="text-slate-400 hover:text-slate-900 dark:hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
             <div id="calDetailBody" class="space-y-3 max-h-80 overflow-y-auto custom-scrollbar text-xs"></div>
             <div class="mt-5 text-right"><button onclick="closeCalendarDetailModal()" class="px-4 py-2 rounded-xl bg-blue-600 text-white font-bold text-xs">Tutup</button></div>
@@ -814,7 +688,7 @@
 
     <!-- SCRIPT LOGIC -->
     <script>
-        const DB_KEY = 'MYJADWAL_DATA_V21';
+        const DB_KEY = 'MYJADWAL_DATA_V24';
         let appState = {
             currentUser: null,
             savedAccounts: [],
@@ -829,15 +703,16 @@
 
         let currentCalendarDate = new Date(); 
         currentCalendarDate.setDate(1); 
-        let activeNotulensiIdForPDF = null;
+
         let tempPhotoData = null;
         let tempVideoData = null;
         let tempVideoName = null;
-        let tempQRSignatureData = null;
-        
-        let tempAgendaFileData = null;
-        let tempAgendaFileName = null;
-        let tempAgendaFileType = null;
+
+        let activeSignType = null; 
+        let currentTempSignature = null;
+        let currentTempSignerName = '';
+        let currentTempSignerID = '';
+        let currentTempQrImage = null;
 
         let canvas, ctx, isDrawing = false;
         let mediaStream = null;
@@ -916,105 +791,203 @@
             if (ctx && canvas) { ctx.clearRect(0, 0, canvas.width, canvas.height); }
         }
 
-        function promptSelectSignType(id) {
-            activeNotulensiIdForPDF = id;
+        // FUNGSI UTAMA GENERATOR QR OFF-SCREEN (MENCEGAH BUG QR TIDAK TERDETEKSI)
+        function createQRDataURL(name, uniqueId, timestamp) {
+            const safeName = name || 'MyJadwal User';
+            const safeId = uniqueId || 'AUTH-001';
+            const ts = timestamp || new Date().toISOString();
+            const qrDataString = `SAH_DIGITAL|Nama:${safeName}|ID:${safeId}|Waktu:${ts}`;
+
+            if (typeof QRious !== 'undefined') {
+                const offscreenCanvas = document.createElement('canvas');
+                const qr = new QRious({
+                    element: offscreenCanvas,
+                    value: qrDataString,
+                    size: 200,
+                    level: 'H',
+                    background: '#ffffff',
+                    foreground: '#0f172a'
+                });
+                return qr.toDataURL('image/png');
+            }
+            return '';
+        }
+
+        function openSelectSignModalForNew() {
             document.getElementById('modalSelectSignType').classList.remove('hidden');
         }
 
-        function chooseSignManual() {
+        function selectSignTypeManual() {
             document.getElementById('modalSelectSignType').classList.add('hidden');
+            activeSignType = 'manual';
             clearSignature();
-            document.getElementById('manualSignerName').value = appState.currentUser ? appState.currentUser.name : '';
-            document.getElementById('modalSignatureManual').classList.remove('hidden');
+            document.getElementById('setupManualSignerName').value = appState.currentUser ? appState.currentUser.name : '';
+            document.getElementById('modalSetupManualSign').classList.remove('hidden');
         }
 
-        function closeManualSignatureModal() {
-            document.getElementById('modalSignatureManual').classList.add('hidden');
+        function closeSetupManualSign() {
+            document.getElementById('modalSetupManualSign').classList.add('hidden');
         }
 
-        function confirmManualSignatureAndDownload() {
-            const signerName = document.getElementById('manualSignerName').value.trim();
+        function proceedToNotulensiFormAfterManual() {
+            const signerName = document.getElementById('setupManualSignerName').value.trim();
             if (!signerName) {
                 showToast("Mohon masukkan nama penanda tangan!", "error");
                 return;
             }
-            const sigDataUrl = canvas.toDataURL('image/png');
-            const targetId = activeNotulensiIdForPDF;
-            const notul = appState.notulensi.find(n => n.id === targetId);
-            if (notul) {
-                notul.signType = 'manual';
-                notul.signerName = signerName;
-                notul.signature = sigDataUrl;
-                saveState();
-            }
-            closeManualSignatureModal();
-            downloadDirectPDF(targetId);
+            currentTempSignerName = signerName;
+            currentTempSignature = canvas.toDataURL('image/png');
+            currentTempQrImage = null;
+            closeSetupManualSign();
+            openNotulensiFormModal();
         }
 
-        function handleQRImageUpload(event) {
-            const file = event.target.files[0];
-            if (!file) {
-                tempQRSignatureData = null;
-                document.getElementById('qrUploadPreviewBox').classList.add('hidden');
-                return;
-            }
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                tempQRSignatureData = e.target.result;
-                document.getElementById('qrUploadPreviewImg').src = tempQRSignatureData;
-                document.getElementById('qrUploadPreviewBox').classList.remove('hidden');
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function chooseSignQR() {
+        function selectSignTypeQR() {
             document.getElementById('modalSelectSignType').classList.add('hidden');
-            document.getElementById('qrSignerName').value = appState.currentUser ? appState.currentUser.name : '';
-            document.getElementById('qrSignerID').value = '';
-            document.getElementById('qrConsentCheck').checked = false;
-            document.getElementById('qrImageFileInput').value = '';
-            document.getElementById('qrUploadPreviewBox').classList.add('hidden');
-            tempQRSignatureData = null;
-            document.getElementById('modalSignatureQR').classList.remove('hidden');
+            activeSignType = 'qr';
+            document.getElementById('setupQrSignerName').value = appState.currentUser ? appState.currentUser.name : '';
+            document.getElementById('setupQrSignerID').value = 'ID-' + Math.floor(1000 + Math.random() * 9000);
+            document.getElementById('setupQrConsent').checked = false;
+            document.getElementById('modalSetupQRSign').classList.remove('hidden');
+            generateDynamicQR();
         }
 
-        function closeQRSignatureModal() {
-            document.getElementById('modalSignatureQR').classList.add('hidden');
+        function closeSetupQRSign() {
+            document.getElementById('modalSetupQRSign').classList.add('hidden');
         }
 
-        function confirmQRSignatureAndDownload(formatType = 'pdf') {
-            const name = document.getElementById('qrSignerName').value.trim();
-            const phoneId = document.getElementById('qrSignerID').value.trim();
-            const consented = document.getElementById('qrConsentCheck').checked;
+        function generateDynamicQR() {
+            const name = document.getElementById('setupQrSignerName').value.trim() || 'MyJadwal User';
+            const uniqueId = document.getElementById('setupQrSignerID').value.trim() || 'AUTH-001';
+            const qrDataString = `SAH_DIGITAL|Nama:${name}|ID:${uniqueId}|Waktu:${new Date().toISOString()}`;
 
-            if (!tempQRSignatureData) {
-                showToast("Mohon unggah gambar QR Code (JPG/PNG) terlebih dahulu!", "error");
-                return;
+            const qrCanvas = document.getElementById('qrCodeCanvas');
+            if (qrCanvas && typeof QRious !== 'undefined') {
+                const qr = new QRious({
+                    element: qrCanvas,
+                    value: qrDataString,
+                    size: 140,
+                    level: 'H',
+                    background: '#ffffff',
+                    foreground: '#1e1b4b'
+                });
+                currentTempQrImage = qr.toDataURL('image/png');
             }
+        }
+
+        function proceedToNotulensiFormAfterQR() {
+            const name = document.getElementById('setupQrSignerName').value.trim();
+            const phoneId = document.getElementById('setupQrSignerID').value.trim();
+            const consented = document.getElementById('setupQrConsent').checked;
+
             if (!name || !phoneId) {
-                showToast("Mohon lengkapi Nama Lengkap dan ID!", "error");
+                showToast("Mohon lengkapi Nama Lengkap dan ID Digital / No. HP!", "error");
                 return;
             }
             if (!consented) {
-                showToast("Anda harus mencentang persetujuan tanda tangan elektronik.", "error");
+                showToast("Anda harus mencentang persetujuan tanda tangan digital & QR.", "error");
                 return;
             }
 
-            const targetId = activeNotulensiIdForPDF;
-            const notul = appState.notulensi.find(n => n.id === targetId);
-            if (notul) {
-                notul.signType = 'qr';
-                notul.signerName = name;
-                notul.signerID = phoneId;
-                notul.qrImageData = tempQRSignatureData;
-                saveState();
-            }
-            closeQRSignatureModal();
+            currentTempSignerName = name;
+            currentTempSignerID = phoneId;
+            currentTempQrImage = createQRDataURL(name, phoneId, new Date().toISOString());
+            currentTempSignature = null;
+            
+            closeSetupQRSign();
+            openNotulensiFormModal();
+        }
 
-            if (formatType === 'word') {
-                downloadWordDocument(targetId);
+        function openNotulensiFormModal(editId = null) {
+            const form = document.querySelector('#modalNotulensi form');
+            if (form) form.reset();
+            document.getElementById('notulensiId').value = '';
+            tempPhotoData = null; tempVideoData = null; tempVideoName = null;
+            document.getElementById('mediaPreviewContainer').innerHTML = '';
+
+            if (editId) {
+                const n = appState.notulensi.find(x => x.id === editId);
+                if (n) {
+                    document.getElementById('notulensiModalHeader').innerText = "Edit Notulensi Rapat";
+                    document.getElementById('notulensiId').value = n.id;
+                    document.getElementById('notulensiJudul').value = n.judul;
+                    document.getElementById('notulensiTanggal').value = n.tanggal;
+                    document.getElementById('notulensiPembahasan').value = n.pembahasan;
+                    tempPhotoData = n.photoData || null;
+                    tempVideoData = n.videoData || null;
+                    tempVideoName = n.videoName || null;
+                    updateMediaPreviewUI();
+                }
             } else {
-                downloadDirectPDF(targetId);
+                document.getElementById('notulensiModalHeader').innerText = "Buat Notulensi Rapat Baru";
+                document.getElementById('notulensiTanggal').value = new Date().toISOString().split('T')[0];
+            }
+            document.getElementById('modalNotulensi').classList.remove('hidden');
+        }
+
+        function closeNotulensiModal() { 
+            document.getElementById('modalNotulensi').classList.add('hidden'); 
+        }
+        
+        function saveNotulensi(e) {
+            e.preventDefault();
+            if (appState.currentUser && appState.currentUser.isGuest) { 
+                showToast("Akses Tamu tidak diizinkan mengubah data.", "error"); 
+                return; 
+            }
+            const id = document.getElementById('notulensiId').value;
+            const judul = document.getElementById('notulensiJudul').value.trim();
+            const tanggal = document.getElementById('notulensiTanggal').value;
+            const pembahasan = document.getElementById('notulensiPembahasan').value.trim();
+
+            if (!judul || !pembahasan) {
+                showToast("Judul dan isi pembahasan rapat wajib diisi.", "error");
+                return;
+            }
+
+            if (id) {
+                const idx = appState.notulensi.findIndex(n => n.id === id);
+                if (idx !== -1) {
+                    appState.notulensi[idx] = { 
+                        ...appState.notulensi[idx], judul, tanggal, pembahasan,
+                        photoData: tempPhotoData, videoData: tempVideoData, videoName: tempVideoName
+                    };
+                }
+                showToast("Notulensi diperbarui!", "success");
+            } else {
+                const signTime = new Date().toISOString();
+                const finalQrData = (activeSignType === 'qr') 
+                    ? (currentTempQrImage || createQRDataURL(currentTempSignerName, currentTempSignerID, signTime)) 
+                    : null;
+
+                appState.notulensi.push({ 
+                    id: 'NOT-' + Date.now(), 
+                    judul, 
+                    tanggal, 
+                    pembahasan, 
+                    signType: activeSignType || 'qr', 
+                    signature: currentTempSignature, 
+                    signerName: currentTempSignerName, 
+                    signerID: currentTempSignerID, 
+                    signTimestamp: signTime,
+                    qrImageData: finalQrData,
+                    photoData: tempPhotoData, 
+                    videoData: tempVideoData, 
+                    videoName: tempVideoName
+                });
+                showToast("Notulensi baru berhasil disimpan dengan tanda tangan digital & QR!", "success");
+            }
+            saveState(); 
+            closeNotulensiModal(); 
+            renderAll();
+        }
+
+        function deleteNotulensi(id) {
+            if (confirm("Hapus dokumen notulensi rapat ini secara permanen?")) {
+                appState.notulensi = appState.notulensi.filter(n => n.id !== id);
+                saveState(); 
+                renderAll(); 
+                showToast("Notulensi dihapus.", "info");
             }
         }
 
@@ -1025,11 +998,12 @@
             return `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
         }
 
+        // FUNGSI UNDUH PDF DENGAN PENGAMANAN PEMUATAN GAMBAR DAN TANPA MENAMPILKAN ID KITA
         function downloadDirectPDF(id) {
             const notul = appState.notulensi.find(n => n.id === id);
             if (!notul) return;
 
-            showToast("Memproses & mengunduh file PDF...", "info");
+            showToast("Menyiapkan QR Code & merender PDF...", "info");
 
             const pdfContent = document.createElement('div');
             pdfContent.style.padding = '35px';
@@ -1056,20 +1030,25 @@
                 `;
             } else {
                 const signerDisplayName = notul.signerName || 'Penanda Tangan';
-                const qrImageSrc = notul.qrImageData || '';
+                const signerDisplayID = notul.signerID || 'ID-VERIFIED';
+                
+                const freshQrDataUrl = createQRDataURL(signerDisplayName, signerDisplayID, notul.signTimestamp || notul.tanggal);
+                const finalQrSrc = freshQrDataUrl || notul.qrImageData || '';
 
+                // KODE ID KITA DIHAPUS DARI TAMPILAN PDF (Hanya menampilkan keterangan verifikasi umum tanpa memunculkan ID/Nomor HP/NIP secara teks)
                 signatureAreaHtml = `
-                    <div style="margin-top: 45px; display: flex; justify-content: space-between; align-items: flex-end;">
-                        <div style="text-align: left; width: 280px;">
-                            <p style="margin: 0; font-size: 11px; font-style: italic; color: #555;">Dokumen ini sah dan ditandatangani secara digital oleh ${signerDisplayName}</p>
+                    <div style="margin-top: 45px; display: flex; justify-content: space-between; align-items: flex-end; page-break-inside: avoid;">
+                        <div style="text-align: left; width: 300px; border-left: 3px solid #4f46e5; padding-left: 10px;">
+                            <p style="margin: 0; font-size: 10px; font-weight: bold; color: #312e81; text-transform: uppercase;">Verifikasi Tanda Tangan Elektronik</p>
+                            <p style="margin: 3px 0 0; font-size: 10px; color: #475569; line-height: 1.4;">Dokumen ini telah disahkan secara digital melalui sistem QR Code MyJadwal oleh <strong>${signerDisplayName}</strong>.</p>
                         </div>
-                        <div style="text-align: center; width: 240px;">
+                        <div style="text-align: center; width: 220px;">
                             <p style="margin: 0; font-size: 12px;">${formattedDateStr}</p>
-                            <p style="margin: 2px 0 0; font-size: 12px;">Disahkan oleh,</p>
-                            <div style="margin: 8px auto; display: inline-block; padding: 6px; background: #fff; border: 1px solid #ddd; border-radius: 4px;">
-                                <img src="${qrImageSrc}" style="width: 85px; height: 85px; display: block; object-fit: contain;" />
+                            <p style="margin: 2px 0 0; font-size: 12px;">Disahkan secara Digital,</p>
+                            <div style="margin: 8px auto; width: 96px; height: 96px; padding: 5px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+                                ${finalQrSrc ? `<img src="${finalQrSrc}" style="width: 84px; height: 84px; display: block;" />` : '<span style="font-size:10px;color:red;">QR Error</span>'}
                             </div>
-                            <p style="margin: 2px 0 0; font-size: 13px; font-weight: bold;">${signerDisplayName}</p>
+                            <p style="margin: 4px 0 0; font-size: 13px; font-weight: bold; text-decoration: underline;">${signerDisplayName}</p>
                         </div>
                     </div>
                 `;
@@ -1098,91 +1077,31 @@
                 <div style="font-size: 13px; text-align: justify; white-space: pre-wrap; padding: 0 10px; min-height: 80px; line-height: 1.6;">${notul.pembahasan}</div>
 
                 ${notul.photoData ? `
-                    <div style="margin-top: 25px; text-align: center;">
+                    <div style="margin-top: 25px; text-align: center; page-break-inside: avoid;">
                         <div style="font-weight: bold; background: #f1f5f9; padding: 7px 12px; margin-bottom: 12px; font-size: 13px; text-transform: uppercase; text-align: left; border-left: 4px solid #4f46e5;">
                             Dokumentasi Foto Kegiatan
                         </div>
-                        <img src="${notul.photoData}" style="max-width: 100%; max-height: 260px; border-radius: 6px; border: 1px solid #cbd5e1;" />
+                        <img src="${notul.photoData}" style="max-width: 100%; max-height: 250px; border-radius: 6px; border: 1px solid #cbd5e1;" />
                     </div>
                 ` : ''}
 
                 ${signatureAreaHtml}
             `;
 
-            processPdfExport(pdfContent, notul.judul);
-        }
+            const images = pdfContent.querySelectorAll('img');
+            const imagePromises = Array.from(images).map(img => {
+                if (img.complete) return Promise.resolve();
+                return new Promise(resolve => {
+                    img.onload = resolve;
+                    img.onerror = resolve;
+                });
+            });
 
-        function downloadWordDocument(id) {
-            const notul = appState.notulensi.find(n => n.id === id);
-            if (!notul) return;
-
-            showToast("Memproses & mengunduh file Word...", "info");
-            const formattedDateStr = getFormattedSignDate();
-            let signatureHtml = '';
-
-            if (notul.signType === 'manual') {
-                signatureHtml = `
-                    <br/><br/>
-                    <table style="width: 100%; border: none;">
-                        <tr>
-                            <td style="width: 60%;"></td>
-                            <td style="width: 40%; text-align: center;">
-                                <p style="font-size: 12px; margin: 0;">${formattedDateStr}</p>
-                                <p style="font-size: 12px; margin: 2px 0;">Disahkan oleh,</p>
-                                ${notul.signature ? `<br/><img src="${notul.signature}" width="150" height="60" style="display: block; margin: 0 auto;" /><br/>` : '<br/><br/>'}
-                                <p style="font-size: 13px; font-weight: bold; text-decoration: underline; margin: 0;">${notul.signerName || 'Penanda Tangan'}</p>
-                            </td>
-                        </tr>
-                    </table>
-                `;
-            } else {
-                const signerDisplayName = notul.signerName || 'Penanda Tangan';
-                const qrImageSrc = notul.qrImageData || '';
-                signatureHtml = `
-                    <br/><br/>
-                    <table style="width: 100%; border: none;">
-                        <tr>
-                            <td style="width: 50%; vertical-align: bottom;">
-                                <p style="font-size: 11px; font-style: italic; color: #555;">Dokumen ini sah dan ditandatangani secara digital oleh ${signerDisplayName}</p>
-                            </td>
-                            <td style="width: 50%; text-align: center; vertical-align: bottom;">
-                                <p style="font-size: 12px; margin: 0;">${formattedDateStr}</p>
-                                <p style="font-size: 12px; margin: 2px 0;">Disahkan oleh,</p>
-                                ${qrImageSrc ? `<br/><img src="${qrImageSrc}" width="80" height="80" style="display: block; margin: 0 auto;" /><br/>` : '<br/><br/>'}
-                                <p style="font-size: 13px; font-weight: bold; margin: 0;">${signerDisplayName}</p>
-                            </td>
-                        </tr>
-                    </table>
-                `;
-            }
-
-            const htmlDoc = `
-                <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-                <head><meta charset='utf-8'><title>${notul.judul}</title></head>
-                <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #111;">
-                    <div style="text-align: center; border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 20px;">
-                        <h2 style="margin: 0; text-transform: uppercase;">Notulensi Rapat Resmi</h2>
-                        <p style="margin: 5px 0 0; font-size: 11px; color: #555;">Portal Akademik MyJadwal Workspace</p>
-                    </div>
-                    <p><strong>Judul Rapat:</strong> ${notul.judul}</p>
-                    <p><strong>Tanggal Rapat:</strong> ${notul.tanggal}</p>
-                    <h3 style="background: #f1f5f9; padding: 6px 10px; border-left: 4px solid #4f46e5; margin-top: 20px;">Poin Pembahasan</h3>
-                    <p style="white-space: pre-wrap; text-align: justify;">${notul.pembahasan}</p>
-                    ${signatureHtml}
-                </body>
-                </html>
-            `;
-
-            const blob = new Blob(['\ufeff' + htmlDoc], { type: 'application/msword' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `Notulensi_${notul.judul.replace(/[^a-zA-Z0-9]/g, '_')}.doc`;
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-            setTimeout(() => URL.revokeObjectURL(url), 1000);
-            showToast("File Word berhasil diunduh!", "success");
+            Promise.all(imagePromises).then(() => {
+                setTimeout(() => {
+                    processPdfExport(pdfContent, notul.judul);
+                }, 150);
+            });
         }
 
         function processPdfExport(pdfContent, judulRapat) {
@@ -1190,14 +1109,14 @@
             const opt = {
                 margin:       0.4,
                 filename:     safeFileName,
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, useCORS: true },
+                image:        { type: 'png', quality: 1.0 },
+                html2canvas:  { scale: 2, useCORS: true, logging: false },
                 jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
             };
 
             if (typeof html2pdf !== 'undefined') {
                 html2pdf().set(opt).from(pdfContent).save().then(() => {
-                    showToast("File PDF berhasil diunduh!", "success");
+                    showToast("File PDF dengan QR Code berhasil diunduh!", "success");
                 }).catch(err => {
                     console.error(err);
                     showToast("Gagal membuat PDF.", "error");
@@ -1287,7 +1206,7 @@
             container.innerHTML = '';
             if (tempPhotoData) {
                 container.innerHTML += `
-                    <div class="relative w-16 h-16 rounded-xl overflow-hidden border border-slate-600 bg-black">
+                    <div class="relative w-16 h-16 rounded-xl overflow-hidden border border-slate-300 dark:border-slate-600 bg-black">
                         <img src="${tempPhotoData}" class="w-full h-full object-cover">
                         <span class="absolute bottom-0 inset-x-0 bg-black/60 text-[8px] text-center text-white">Foto</span>
                     </div>
@@ -1295,9 +1214,9 @@
             }
             if (tempVideoData) {
                 container.innerHTML += `
-                    <div class="flex items-center gap-2 bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-600">
-                        <i data-lucide="video" class="w-4 h-4 text-violet-400"></i>
-                        <span class="text-[11px] text-slate-200 truncate max-w-[120px]">${tempVideoName || 'Video Rapat'}</span>
+                    <div class="flex items-center gap-2 bg-slate-200 dark:bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-300 dark:border-slate-600">
+                        <i data-lucide="video" class="w-4 h-4 text-violet-500 dark:text-violet-400"></i>
+                        <span class="text-[11px] text-slate-800 dark:text-slate-200 truncate max-w-[120px]">${tempVideoName || 'Video Rapat'}</span>
                     </div>
                 `;
                 lucide.createIcons();
@@ -1315,7 +1234,7 @@
         }
 
         function loadState() {
-            const possibleKeys = [DB_KEY, 'MYJADWAL_DATA_V20', 'MYJADWAL_DATA_V19', 'MYJADWAL_DATA_V18'];
+            const possibleKeys = [DB_KEY, 'MYJADWAL_DATA_V23', 'MYJADWAL_DATA_V22', 'MYJADWAL_DATA_V21'];
             let loadedData = null;
             for (const key of possibleKeys) {
                 const saved = localStorage.getItem(key);
@@ -1345,7 +1264,6 @@
             }
         }
 
-        /* --- FITUR NOTIFIKASI & LOG AUDIT --- */
         function toggleNotificationsFeature() {
             appState.settings.notificationsEnabled = !appState.settings.notificationsEnabled;
             saveState();
@@ -1428,21 +1346,21 @@
             if (timestampEl) timestampEl.innerText = `Terakhir diperiksa: ${new Date().toLocaleTimeString()}`;
 
             if (logs.length === 0) {
-                listEl.innerHTML = `<div class="p-2 bg-[#0f172a] rounded-xl text-slate-400 text-center">Belum ada riwayat log notifikasi tercatat.</div>`;
+                listEl.innerHTML = `<div class="p-2 bg-white dark:bg-[#0f172a] rounded-xl text-slate-500 dark:text-slate-400 text-center">Belum ada riwayat log notifikasi tercatat.</div>`;
                 return;
             }
 
             listEl.innerHTML = '';
             logs.forEach(log => {
-                let badgeColor = 'text-emerald-400 bg-emerald-950/60 border-emerald-800/40';
-                if (log.status === 'FAILED') badgeColor = 'text-rose-400 bg-rose-950/60 border-rose-800/40';
-                if (log.status === 'WARNING') badgeColor = 'text-amber-400 bg-amber-950/60 border-amber-800/40';
+                let badgeColor = 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 border-emerald-200 dark:border-emerald-800/40';
+                if (log.status === 'FAILED') badgeColor = 'text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/60 border-rose-200 dark:border-rose-800/40';
+                if (log.status === 'WARNING') badgeColor = 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/60 border-amber-200 dark:border-amber-800/40';
 
                 listEl.innerHTML += `
-                    <div class="p-2 bg-[#0f172a] rounded-xl border border-slate-700/60 flex items-center justify-between gap-2">
+                    <div class="p-2 bg-white dark:bg-[#0f172a] rounded-xl border border-slate-200 dark:border-slate-700/60 flex items-center justify-between gap-2">
                         <div>
-                            <span class="text-[10px] text-slate-400 block">${log.time}</span>
-                            <span class="text-slate-200 font-sans">${log.description}</span>
+                            <span class="text-[10px] text-slate-500 dark:text-slate-400 block">${log.time}</span>
+                            <span class="text-slate-800 dark:text-slate-200 font-sans">${log.description}</span>
                         </div>
                         <span class="text-[9px] font-bold px-2 py-0.5 rounded border uppercase shrink-0 ${badgeColor}">${log.status}</span>
                     </div>
@@ -1450,7 +1368,10 @@
             });
         }
 
-        /* --- MANAJEMEN FILE LAMPIRAN AGENDA (MAX 3MB) --- */
+        let tempAgendaFileData = null;
+        let tempAgendaFileName = null;
+        let tempAgendaFileType = null;
+
         function handleAgendaFileUpload(event) {
             const file = event.target.files[0];
             const errorEl = document.getElementById('agendaFileError');
@@ -1494,15 +1415,15 @@
 
             const titleEl = document.getElementById('previewFileTitle');
             const containerEl = document.getElementById('previewFileContainer');
-            titleEl.innerHTML = `<i data-lucide="file-text" class="w-4 h-4 text-pink-400"></i> Pratinjau: ${agenda.fileName || 'Lampiran'}`;
+            titleEl.innerHTML = `<i data-lucide="file-text" class="w-4 h-4 text-pink-500 dark:text-pink-400"></i> Pratinjau: ${agenda.fileName || 'Lampiran'}`;
             containerEl.innerHTML = '';
 
             if (agenda.fileType && agenda.fileType.includes('image')) {
-                containerEl.innerHTML = `<img src="${agenda.fileData}" class="max-w-full max-h-[500px] object-contain rounded-xl border border-slate-700" />`;
+                containerEl.innerHTML = `<img src="${agenda.fileData}" class="max-w-full max-h-[500px] object-contain rounded-xl border border-slate-300 dark:border-slate-700" />`;
             } else if (agenda.fileType && agenda.fileType.includes('pdf')) {
-                containerEl.innerHTML = `<iframe src="${agenda.fileData}" class="w-full h-[500px] rounded-xl border border-slate-700 bg-white"></iframe>`;
+                containerEl.innerHTML = `<iframe src="${agenda.fileData}" class="w-full h-[500px] rounded-xl border border-slate-300 dark:border-slate-700 bg-white"></iframe>`;
             } else {
-                containerEl.innerHTML = `<div class="p-6 text-center text-slate-300">Format file tidak mendukung pratinjau langsung. Silakan unduh file.</div>`;
+                containerEl.innerHTML = `<div class="p-6 text-center text-slate-700 dark:text-slate-300">Format file tidak mendukung pratinjau langsung. Silakan unduh file.</div>`;
             }
 
             document.getElementById('modalAgendaFilePreview').classList.remove('hidden');
@@ -1528,7 +1449,6 @@
             showToast("File berhasil diunduh!", "success");
         }
 
-        /* --- PENGINGAT ALARM WAKTU NYATA & AUDIO --- */
         function testAlarmSound() {
             playBeepSound();
             showToast("Uji suara alarm berbunyi.", "info");
@@ -1568,7 +1488,7 @@
                     const osc = alarmAudioContext.createOscillator();
                     const gainNode = alarmAudioContext.createGain();
                     osc.type = 'sine';
-                    osc.frequency.setValueAtTime(880, alarmAudioContext.currentTime); // A5 note
+                    osc.frequency.setValueAtTime(880, alarmAudioContext.currentTime);
                     gainNode.gain.setValueAtTime(0.2, alarmAudioContext.currentTime);
                     gainNode.gain.exponentialRampToValueAtTime(0.001, alarmAudioContext.currentTime + 0.4);
                     osc.connect(gainNode);
@@ -1582,7 +1502,6 @@
             }
         }
 
-        /* --- MODUL AGENDA --- */
         function openAgendaModal(editId = null) {
             const form = document.querySelector('#modalAgenda form');
             if(form) form.reset();
@@ -1690,7 +1609,6 @@
             }
         }
 
-        /* --- MODUL TUGAS --- */
         function openTugasModal(editId = null) {
             const form = document.querySelector('#modalTugas form');
             if(form) form.reset();
@@ -1781,76 +1699,6 @@
             }
         }
 
-        /* --- MODUL NOTULENSI --- */
-        function openNotulensiModal(editId = null) {
-            const form = document.querySelector('#modalNotulensi form');
-            if (form) form.reset();
-            document.getElementById('notulensiId').value = '';
-            tempPhotoData = null; tempVideoData = null; tempVideoName = null;
-            document.getElementById('mediaPreviewContainer').innerHTML = '';
-
-            if (editId) {
-                const n = appState.notulensi.find(x => x.id === editId);
-                if (n) {
-                    document.getElementById('notulensiModalHeader').innerText = "Edit Notulensi Rapat";
-                    document.getElementById('notulensiId').value = n.id;
-                    document.getElementById('notulensiJudul').value = n.judul;
-                    document.getElementById('notulensiTanggal').value = n.tanggal;
-                    document.getElementById('notulensiPembahasan').value = n.pembahasan;
-                    tempPhotoData = n.photoData || null;
-                    tempVideoData = n.videoData || null;
-                    tempVideoName = n.videoName || null;
-                    updateMediaPreviewUI();
-                }
-            } else {
-                document.getElementById('notulensiModalHeader').innerText = "Buat Notulensi Baru";
-                document.getElementById('notulensiTanggal').value = new Date().toISOString().split('T')[0];
-            }
-            document.getElementById('modalNotulensi').classList.remove('hidden');
-        }
-        function closeNotulensiModal() { document.getElementById('modalNotulensi').classList.add('hidden'); }
-        
-        function saveNotulensi(e) {
-            e.preventDefault();
-            if (appState.currentUser && appState.currentUser.isGuest) { showToast("Akses Tamu tidak diizinkan mengubah data.", "error"); return; }
-            const id = document.getElementById('notulensiId').value;
-            const judul = document.getElementById('notulensiJudul').value.trim();
-            const tanggal = document.getElementById('notulensiTanggal').value;
-            const pembahasan = document.getElementById('notulensiPembahasan').value.trim();
-
-            if (!judul || !pembahasan) {
-                showToast("Judul dan isi pembahasan rapat wajib diisi.", "error");
-                return;
-            }
-
-            if (id) {
-                const idx = appState.notulensi.findIndex(n => n.id === id);
-                if (idx !== -1) {
-                    appState.notulensi[idx] = { 
-                        ...appState.notulensi[idx], judul, tanggal, pembahasan,
-                        photoData: tempPhotoData, videoData: tempVideoData, videoName: tempVideoName
-                    };
-                }
-                showToast("Notulensi diperbarui!", "success");
-            } else {
-                appState.notulensi.push({ 
-                    id: 'NOT-' + Date.now(), judul, tanggal, pembahasan, 
-                    signType: null, signature: null, signerName: '', signerID: '', qrImageData: null,
-                    photoData: tempPhotoData, videoData: tempVideoData, videoName: tempVideoName
-                });
-                showToast("Notulensi dibuat!", "success");
-            }
-            saveState(); closeNotulensiModal(); renderAll();
-        }
-
-        function deleteNotulensi(id) {
-            if (confirm("Hapus dokumen notulensi rapat ini secara permanen?")) {
-                appState.notulensi = appState.notulensi.filter(n => n.id !== id);
-                saveState(); renderAll(); showToast("Notulensi dihapus.", "info");
-            }
-        }
-
-        /* --- MODUL JADWAL KULIAH --- */
         function openJadwalModal(editId = null) {
             const form = document.querySelector('#modalJadwal form');
             if(form) form.reset();
@@ -1953,7 +1801,6 @@
             lucide.createIcons();
         }
 
-        /* --- RENDER PINTASAN HARI INI & BESOK (OTOMATIS) --- */
         function renderDashboardShortcuts() {
             const todayEl = document.getElementById('dashboardTodayShortcuts');
             const tomorrowEl = document.getElementById('dashboardTomorrowShortcuts');
@@ -1972,37 +1819,33 @@
             if (badgeTodayDate) badgeTodayDate.innerText = todayStr;
             if (badgeTomorrowDate) badgeTomorrowDate.innerText = tomorrowStr;
 
-            // Filter Agenda & Tugas Hari Ini
             const todayAgendas = appState.agendas.filter(a => a.tanggal === todayStr);
             const todayTasks = appState.tasks.filter(t => t.deadline.startsWith(todayStr));
 
-            // Filter Agenda & Tugas Besok
             const tomorrowAgendas = appState.agendas.filter(a => a.tanggal === tomorrowStr);
             const tomorrowTasks = appState.tasks.filter(t => t.deadline.startsWith(tomorrowStr));
 
-            // Render Hari Ini
             todayEl.innerHTML = '';
             if (todayAgendas.length === 0 && todayTasks.length === 0) {
-                todayEl.innerHTML = `<p class="text-slate-400 text-center py-3">Tidak ada agenda atau tugas hari ini.</p>`;
+                todayEl.innerHTML = `<p class="text-slate-500 dark:text-slate-400 text-center py-3">Tidak ada agenda atau tugas hari ini.</p>`;
             } else {
                 todayAgendas.forEach(a => {
-                    todayEl.innerHTML += `<div class="p-2.5 bg-[#131d38] rounded-xl border border-indigo-900/50 flex justify-between items-center"><div><span class="font-bold text-white block">${a.nama}</span><span class="text-[10px] text-slate-400">Agenda • ${a.jam} WIB</span></div><span class="text-[10px] bg-pink-950 text-pink-300 px-2 py-0.5 rounded">${a.status}</span></div>`;
+                    todayEl.innerHTML += `<div class="p-2.5 bg-slate-50 dark:bg-[#131d38] rounded-xl border border-indigo-200 dark:border-indigo-900/50 flex justify-between items-center"><div><span class="font-bold text-slate-900 dark:text-white block">${a.nama}</span><span class="text-[10px] text-slate-500 dark:text-slate-400">Agenda • ${a.jam} WIB</span></div><span class="text-[10px] bg-pink-100 dark:bg-pink-950 text-pink-700 dark:text-pink-300 px-2 py-0.5 rounded">${a.status}</span></div>`;
                 });
                 todayTasks.forEach(t => {
-                    todayEl.innerHTML += `<div class="p-2.5 bg-[#131d38] rounded-xl border border-amber-900/50 flex justify-between items-center"><div><span class="font-bold text-white block">${t.nama}</span><span class="text-[10px] text-slate-400">Tugas • ${t.dosen}</span></div><span class="text-[10px] bg-amber-950 text-amber-300 px-2 py-0.5 rounded">${t.status}</span></div>`;
+                    todayEl.innerHTML += `<div class="p-2.5 bg-slate-50 dark:bg-[#131d38] rounded-xl border border-amber-200 dark:border-amber-900/50 flex justify-between items-center"><div><span class="font-bold text-slate-900 dark:text-white block">${t.nama}</span><span class="text-[10px] text-slate-500 dark:text-slate-400">Tugas • ${t.dosen}</span></div><span class="text-[10px] bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 px-2 py-0.5 rounded">${t.status}</span></div>`;
                 });
             }
 
-            // Render Besok
             tomorrowEl.innerHTML = '';
             if (tomorrowAgendas.length === 0 && tomorrowTasks.length === 0) {
-                tomorrowEl.innerHTML = `<p class="text-slate-400 text-center py-3">Tidak ada agenda atau tugas besok.</p>`;
+                tomorrowEl.innerHTML = `<p class="text-slate-500 dark:text-slate-400 text-center py-3">Tidak ada agenda atau tugas besok.</p>`;
             } else {
                 tomorrowAgendas.forEach(a => {
-                    tomorrowEl.innerHTML += `<div class="p-2.5 bg-[#131d38] rounded-xl border border-purple-900/50 flex justify-between items-center"><div><span class="font-bold text-white block">${a.nama}</span><span class="text-[10px] text-slate-400">Agenda • ${a.jam} WIB</span></div><span class="text-[10px] bg-pink-950 text-pink-300 px-2 py-0.5 rounded">${a.status}</span></div>`;
+                    tomorrowEl.innerHTML += `<div class="p-2.5 bg-slate-50 dark:bg-[#131d38] rounded-xl border border-purple-200 dark:border-purple-900/50 flex justify-between items-center"><div><span class="font-bold text-slate-900 dark:text-white block">${a.nama}</span><span class="text-[10px] text-slate-500 dark:text-slate-400">Agenda • ${a.jam} WIB</span></div><span class="text-[10px] bg-pink-100 dark:bg-pink-950 text-pink-700 dark:text-pink-300 px-2 py-0.5 rounded">${a.status}</span></div>`;
                 });
                 tomorrowTasks.forEach(t => {
-                    tomorrowEl.innerHTML += `<div class="p-2.5 bg-[#131d38] rounded-xl border border-amber-900/50 flex justify-between items-center"><div><span class="font-bold text-white block">${t.nama}</span><span class="text-[10px] text-slate-400">Tugas • ${t.dosen}</span></div><span class="text-[10px] bg-amber-950 text-amber-300 px-2 py-0.5 rounded">${t.status}</span></div>`;
+                    tomorrowEl.innerHTML += `<div class="p-2.5 bg-slate-50 dark:bg-[#131d38] rounded-xl border border-amber-200 dark:border-amber-900/50 flex justify-between items-center"><div><span class="font-bold text-slate-900 dark:text-white block">${t.nama}</span><span class="text-[10px] text-slate-500 dark:text-slate-400">Tugas • ${t.dosen}</span></div><span class="text-[10px] bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 px-2 py-0.5 rounded">${t.status}</span></div>`;
                 });
             }
         }
@@ -2034,13 +1877,13 @@
                 let fileActionHtml = '';
                 if (a.fileData) {
                     fileActionHtml = `
-                        <div class="flex items-center gap-2 pt-2 border-t border-slate-800/80">
-                            <span class="text-[10px] text-slate-300 truncate max-w-[120px]" title="${a.fileName}">📎 ${a.fileName}</span>
+                        <div class="flex items-center gap-2 pt-2 border-t border-slate-200 dark:border-slate-800/80">
+                            <span class="text-[10px] text-slate-600 dark:text-slate-300 truncate max-w-[120px]" title="${a.fileName}">📎 ${a.fileName}</span>
                             <div class="flex gap-1 ml-auto">
-                                <button onclick="previewAgendaFile('${a.id}')" class="px-2.5 py-1 rounded-lg bg-pink-950/70 hover:bg-pink-900 text-pink-300 font-bold text-[10px] flex items-center gap-1">
+                                <button onclick="previewAgendaFile('${a.id}')" class="px-2.5 py-1 rounded-lg bg-pink-100 dark:bg-pink-950/70 hover:bg-pink-200 dark:hover:bg-pink-900 text-pink-700 dark:text-pink-300 font-bold text-[10px] flex items-center gap-1">
                                     <i data-lucide="eye" class="w-3 h-3"></i> Lihat
                                 </button>
-                                <button onclick="downloadAgendaFile('${a.id}')" class="px-2.5 py-1 rounded-lg bg-purple-950/70 hover:bg-purple-900 text-purple-300 font-bold text-[10px] flex items-center gap-1">
+                                <button onclick="downloadAgendaFile('${a.id}')" class="px-2.5 py-1 rounded-lg bg-purple-100 dark:bg-purple-950/70 hover:bg-purple-200 dark:hover:bg-purple-900 text-purple-700 dark:text-purple-300 font-bold text-[10px] flex items-center gap-1">
                                     <i data-lucide="download" class="w-3 h-3"></i> Unduh
                                 </button>
                             </div>
@@ -2049,27 +1892,27 @@
                 }
 
                 grid.innerHTML += `
-                    <div class="bg-[#0f172a] p-4 sm:p-5 rounded-3xl border border-pink-950/50 space-y-3 flex flex-col justify-between shadow-sm">
+                    <div class="bg-white dark:bg-[#0f172a] p-4 sm:p-5 rounded-3xl border border-pink-200 dark:border-pink-950/50 space-y-3 flex flex-col justify-between shadow-sm">
                         <div class="space-y-2">
                             <div class="flex items-center justify-between gap-2">
-                                <select onchange="updateAgendaInline('${a.id}', 'kriteria', this.value)" class="text-[10px] font-bold uppercase text-pink-400 bg-pink-950/80 px-2 py-1 rounded border border-pink-800/50 focus:outline-none">
+                                <select onchange="updateAgendaInline('${a.id}', 'kriteria', this.value)" class="text-[10px] font-bold uppercase text-pink-600 dark:text-pink-400 bg-pink-50 dark:bg-pink-950/80 px-2 py-1 rounded border border-pink-200 dark:border-pink-800/50 focus:outline-none">
                                     <option value="Umum" ${a.kriteria === 'Umum' ? 'selected' : ''}>Umum</option>
                                     <option value="Khusus" ${a.kriteria === 'Khusus' ? 'selected' : ''}>Khusus</option>
                                     <option value="Tugas" ${a.kriteria === 'Tugas' ? 'selected' : ''}>Tugas</option>
                                 </select>
-                                <select onchange="updateAgendaInline('${a.id}', 'status', this.value)" class="text-[10px] font-bold bg-slate-800 px-2 py-1 rounded text-slate-300 border border-slate-700 focus:outline-none">
+                                <select onchange="updateAgendaInline('${a.id}', 'status', this.value)" class="text-[10px] font-bold bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 focus:outline-none">
                                     <option value="Belum Terlaksana" ${a.status === 'Belum Terlaksana' ? 'selected' : ''}>Belum Terlaksana</option>
                                     <option value="Terlaksana" ${a.status === 'Terlaksana' ? 'selected' : ''}>Terlaksana</option>
                                 </select>
                             </div>
-                            <h4 class="font-bold text-white text-sm">${a.nama}</h4>
-                            <p class="text-xs text-slate-400">Lokasi: ${a.lokasi}</p>
-                            <p class="text-xs text-slate-400 font-mono">${a.tanggal} | ${a.jam} WIB${durasiText}</p>
+                            <h4 class="font-bold text-slate-900 dark:text-white text-sm">${a.nama}</h4>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">Lokasi: ${a.lokasi}</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 font-mono">${a.tanggal} | ${a.jam} WIB${durasiText}</p>
                         </div>
                         ${fileActionHtml}
-                        <div class="flex justify-end gap-2 pt-3 border-t border-slate-800/80">
-                            <button onclick="openAgendaModal('${a.id}')" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-pink-400 font-bold text-xs">Edit</button>
-                            <button onclick="deleteAgenda('${a.id}')" class="px-3 py-1.5 rounded-xl bg-red-950/40 hover:bg-red-900/40 text-red-400 font-bold text-xs">Hapus</button>
+                        <div class="flex justify-end gap-2 pt-3 border-t border-slate-200 dark:border-slate-800/80">
+                            <button onclick="openAgendaModal('${a.id}')" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-pink-600 dark:text-pink-400 font-bold text-xs">Edit</button>
+                            <button onclick="deleteAgenda('${a.id}')" class="px-3 py-1.5 rounded-xl bg-red-50 dark:bg-red-950/40 hover:bg-red-100 dark:hover:bg-red-900/40 text-red-600 dark:text-red-400 font-bold text-xs">Hapus</button>
                         </div>
                     </div>
                 `;
@@ -2082,26 +1925,26 @@
             grid.innerHTML = '';
             appState.tasks.forEach(t => {
                 grid.innerHTML += `
-                    <div class="bg-[#0f172a] p-4 sm:p-5 rounded-3xl border border-amber-950/50 space-y-3 flex flex-col justify-between shadow-sm">
+                    <div class="bg-white dark:bg-[#0f172a] p-4 sm:p-5 rounded-3xl border border-amber-200 dark:border-amber-950/50 space-y-3 flex flex-col justify-between shadow-sm">
                         <div class="space-y-2">
                             <div class="flex items-center justify-between gap-2">
-                                <select onchange="updateTugasInline('${t.id}', 'status', this.value)" class="text-[10px] font-bold uppercase text-amber-400 bg-amber-950/80 px-2 py-1 rounded border border-amber-800/50 focus:outline-none">
+                                <select onchange="updateTugasInline('${t.id}', 'status', this.value)" class="text-[10px] font-bold uppercase text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/80 px-2 py-1 rounded border border-amber-200 dark:border-amber-800/50 focus:outline-none">
                                     <option value="Belum Terkumpul" ${t.status === 'Belum Terkumpul' ? 'selected' : ''}>Belum Terkumpul</option>
                                     <option value="Terkumpul" ${t.status === 'Terkumpul' ? 'selected' : ''}>Terkumpul</option>
                                 </select>
-                                <select onchange="updateTugasInline('${t.id}', 'pengerjaan', this.value)" class="text-[10px] font-bold bg-slate-800 px-2 py-1 rounded text-slate-300 border border-slate-700 focus:outline-none">
+                                <select onchange="updateTugasInline('${t.id}', 'pengerjaan', this.value)" class="text-[10px] font-bold bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 focus:outline-none">
                                     <option value="Belum dikerjakan" ${t.pengerjaan === 'Belum dikerjakan' ? 'selected' : ''}>Belum dikerjakan</option>
                                     <option value="Dalam proses" ${t.pengerjaan === 'Dalam proses' ? 'selected' : ''}>Dalam proses</option>
                                     <option value="Selesai" ${t.pengerjaan === 'Selesai' ? 'selected' : ''}>Selesai</option>
                                 </select>
                             </div>
-                            <h4 class="font-bold text-white text-sm">${t.nama}</h4>
-                            <p class="text-xs text-slate-400">Dosen: ${t.dosen}</p>
-                            <p class="text-xs text-slate-400 font-mono">Deadline: ${t.deadline.replace('T', ' ')}</p>
+                            <h4 class="font-bold text-slate-900 dark:text-white text-sm">${t.nama}</h4>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">Dosen: ${t.dosen}</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 font-mono">Deadline: ${t.deadline.replace('T', ' ')}</p>
                         </div>
-                        <div class="flex justify-end gap-2 pt-3 border-t border-slate-800/80">
-                            <button onclick="openTugasModal('${t.id}')" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-400 font-bold text-xs">Edit</button>
-                            <button onclick="deleteTugas('${t.id}')" class="px-3 py-1.5 rounded-xl bg-red-950/40 hover:bg-red-900/40 text-red-400 font-bold text-xs">Hapus</button>
+                        <div class="flex justify-end gap-2 pt-3 border-t border-slate-200 dark:border-slate-800/80">
+                            <button onclick="openTugasModal('${t.id}')" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-amber-600 dark:text-amber-400 font-bold text-xs">Edit</button>
+                            <button onclick="deleteTugas('${t.id}')" class="px-3 py-1.5 rounded-xl bg-red-50 dark:bg-red-950/40 hover:bg-red-100 dark:hover:bg-red-900/40 text-red-600 dark:text-red-400 font-bold text-xs">Hapus</button>
                         </div>
                     </div>
                 `;
@@ -2121,30 +1964,30 @@
                     </button>
                 ` : '';
 
-                let signStatusBadge = n.signType ? `<span class="inline-block text-[10px] bg-emerald-950 text-emerald-300 px-2 py-0.5 rounded border border-emerald-800/50">✅ Disahkan (${n.signType === 'qr' ? 'Digital' : 'Manual'})</span>` : '';
+                let signStatusBadge = n.signType ? `<span class="inline-block text-[10px] bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-800/50">✅ Disahkan (${n.signType === 'qr' ? 'Digital & QR' : 'Manual'})</span>` : '';
 
                 grid.innerHTML += `
-                    <div class="bg-[#0f172a] p-4 sm:p-5 rounded-3xl border border-indigo-950/50 space-y-3 flex flex-col justify-between shadow-sm">
+                    <div class="bg-white dark:bg-[#0f172a] p-4 sm:p-5 rounded-3xl border border-indigo-200 dark:border-indigo-950/50 space-y-3 flex flex-col justify-between shadow-sm">
                         <div class="space-y-2">
-                            <span class="text-[10px] font-bold uppercase text-indigo-400 bg-indigo-950/60 px-2 py-0.5 rounded border border-indigo-800/40">Notulensi Rapat</span>
-                            <h4 class="font-bold text-white text-sm">${n.judul}</h4>
-                            <p class="text-xs text-slate-400 font-mono">Tanggal: ${n.tanggal}</p>
+                            <span class="text-[10px] font-bold uppercase text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/60 px-2 py-0.5 rounded border border-indigo-200 dark:border-indigo-800/40">Notulensi Rapat</span>
+                            <h4 class="font-bold text-slate-900 dark:text-white text-sm">${n.judul}</h4>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 font-mono">Tanggal: ${n.tanggal}</p>
                             <div class="flex gap-1.5 flex-wrap">
-                                ${n.photoData ? `<span class="inline-block text-[10px] bg-indigo-950 text-indigo-300 px-2 py-0.5 rounded border border-indigo-800/50">📷 Foto</span>` : ''}
-                                ${n.videoData ? `<span class="inline-block text-[10px] bg-violet-950 text-violet-300 px-2 py-0.5 rounded border border-violet-800/50">🎥 Video</span>` : ''}
+                                ${n.photoData ? `<span class="inline-block text-[10px] bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-300 px-2 py-0.5 rounded border border-indigo-200 dark:border-indigo-800/50">📷 Foto</span>` : ''}
+                                ${n.videoData ? `<span class="inline-block text-[10px] bg-violet-50 dark:bg-violet-950 text-violet-600 dark:text-violet-300 px-2 py-0.5 rounded border border-violet-200 dark:border-violet-800/50">🎥 Video</span>` : ''}
                                 ${signStatusBadge}
                             </div>
                         </div>
-                        <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between gap-2 flex-wrap">
+                        <div class="pt-3 border-t border-slate-200 dark:border-slate-800/80 flex items-center justify-between gap-2 flex-wrap">
                             <div class="flex gap-2 flex-wrap">
-                                <button onclick="promptSelectSignType('${n.id}')" class="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs flex items-center gap-1 shadow-md">
-                                    <i data-lucide="file-down" class="w-3.5 h-3.5"></i> TTD & Unduh
+                                <button onclick="downloadDirectPDF('${n.id}')" class="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs flex items-center gap-1 shadow-md">
+                                    <i data-lucide="file-down" class="w-3.5 h-3.5"></i> Unduh PDF
                                 </button>
                                 ${videoBtnHtml}
                             </div>
                             <div class="flex gap-1">
-                                <button onclick="openNotulensiModal('${n.id}')" class="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-indigo-400 font-bold text-xs">Edit</button>
-                                <button onclick="deleteNotulensi('${n.id}')" class="px-2.5 py-1.5 rounded-xl bg-red-950/40 hover:bg-red-900/40 text-red-400 font-bold text-xs">Hapus</button>
+                                <button onclick="openNotulensiFormModal('${n.id}')" class="px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-indigo-600 dark:text-indigo-400 font-bold text-xs">Edit</button>
+                                <button onclick="deleteNotulensi('${n.id}')" class="px-2.5 py-1.5 rounded-xl bg-red-50 dark:bg-red-950/40 hover:bg-red-100 dark:hover:bg-red-900/40 text-red-600 dark:text-red-400 font-bold text-xs">Hapus</button>
                             </div>
                         </div>
                     </div>
@@ -2160,25 +2003,25 @@
                 let html = '';
                 appState.schedules.filter(s => s.hari === d).forEach(s => {
                     html += `
-                        <div class="p-3 bg-[#131d38] rounded-2xl text-xs space-y-1.5 border border-slate-800">
-                            <div class="flex justify-between items-start font-bold text-slate-100 gap-2">
+                        <div class="p-3 bg-slate-50 dark:bg-[#131d38] rounded-2xl text-xs space-y-1.5 border border-slate-200 dark:border-slate-800">
+                            <div class="flex justify-between items-start font-bold text-slate-800 dark:text-slate-100 gap-2">
                                 <span class="text-sm">${s.matkul}</span>
-                                <span class="text-cyan-400 font-mono text-[11px] bg-cyan-950/60 px-2 py-0.5 rounded">${s.jam}</span>
+                                <span class="text-cyan-600 dark:text-cyan-400 font-mono text-[11px] bg-cyan-50 dark:bg-cyan-950/60 px-2 py-0.5 rounded">${s.jam}</span>
                             </div>
-                            <div class="text-[11px] text-slate-400">
+                            <div class="text-[11px] text-slate-500 dark:text-slate-400">
                                 <p>Ruang: ${s.ruang} | Dosen: ${s.dosen}</p>
                             </div>
-                            <div class="flex justify-end gap-2 pt-2 border-t border-slate-800/60">
-                                <button onclick="openJadwalModal('${s.id}')" class="text-cyan-400 text-[11px] font-bold">Edit</button>
-                                <button onclick="deleteJadwal('${s.id}')" class="text-red-400 text-[11px] font-bold">Hapus</button>
+                            <div class="flex justify-end gap-2 pt-2 border-t border-slate-200 dark:border-slate-800/60">
+                                <button onclick="openJadwalModal('${s.id}')" class="text-cyan-600 dark:text-cyan-400 text-[11px] font-bold">Edit</button>
+                                <button onclick="deleteJadwal('${s.id}')" class="text-red-500 dark:text-red-400 text-[11px] font-bold">Hapus</button>
                             </div>
                         </div>
                     `;
                 });
                 grid.innerHTML += `
-                    <div class="bg-[#0f172a] p-4 sm:p-5 rounded-3xl border border-cyan-950/50 space-y-3 shadow-sm">
-                        <h4 class="font-extrabold text-cyan-400 border-b border-slate-800 pb-2 text-sm">${d}</h4>
-                        <div class="space-y-2.5">${html || '<p class="text-xs text-slate-500">Tidak ada jadwal.</p>'}</div>
+                    <div class="bg-white dark:bg-[#0f172a] p-4 sm:p-5 rounded-3xl border border-cyan-200 dark:border-cyan-950/50 space-y-3 shadow-sm">
+                        <h4 class="font-extrabold text-cyan-600 dark:text-cyan-400 border-b border-slate-200 dark:border-slate-800 pb-2 text-sm">${d}</h4>
+                        <div class="space-y-2.5">${html || '<p class="text-xs text-slate-400">Tidak ada jadwal.</p>'}</div>
                     </div>
                 `;
             });
@@ -2191,17 +2034,16 @@
             appState.finances.forEach(f => {
                 tbody.innerHTML += `
                     <tr>
-                        <td class="py-3 text-slate-400">${f.date}</td>
-                        <td class="py-3 font-semibold text-white">${f.desc}</td>
-                        <td class="py-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${f.type === 'Pemasukan' ? 'bg-emerald-950 text-emerald-400' : 'bg-rose-950 text-rose-400'}">${f.type}</span></td>
-                        <td class="py-3 text-right font-bold ${f.type === 'Pemasukan' ? 'text-emerald-400' : 'text-rose-400'}">${f.type === 'Pemasukan' ? '+' : '-'} Rp ${f.amount.toLocaleString()}</td>
-                        <td class="py-3 text-center"><button onclick="deleteFinance('${f.id}')" class="text-rose-400 font-bold">Hapus</button></td>
+                        <td class="py-3 text-slate-500 dark:text-slate-400">${f.date}</td>
+                        <td class="py-3 font-semibold text-slate-900 dark:text-white">${f.desc}</td>
+                        <td class="py-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${f.type === 'Pemasukan' ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400' : 'bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-400'}">${f.type}</span></td>
+                        <td class="py-3 text-right font-bold ${f.type === 'Pemasukan' ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}">${f.type === 'Pemasukan' ? '+' : '-'} Rp ${f.amount.toLocaleString()}</td>
+                        <td class="py-3 text-center"><button onclick="deleteFinance('${f.id}')" class="text-rose-500 dark:text-rose-400 font-bold">Hapus</button></td>
                     </tr>
                 `;
             });
         }
 
-        /* --- PERBAIKAN BUG KALENDER INTERAKTIF --- */
         function renderCalendarWidget() {
             const grid = document.getElementById('calendarGrid');
             if (!grid) return;
@@ -2211,7 +2053,6 @@
             const mNames = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
             if (document.getElementById('calendarMonthYear')) document.getElementById('calendarMonthYear').innerText = `${mNames[month]} ${year}`;
 
-            // Perbaikan bug perhitungan offset hari pertama dalam minggu (0 = Minggu)
             const firstDayIndex = new Date(year, month, 1).getDay();
             const totalDays = new Date(year, month + 1, 0).getDate();
             
@@ -2221,7 +2062,7 @@
             for (let day = 1; day <= totalDays; day++) {
                 const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                 grid.innerHTML += `
-                    <div onclick="openCalendarDetail('${dateStr}', ${day}, '${mNames[month]}', ${year})" class="aspect-square bg-[#131d38] hover:bg-slate-700 cursor-pointer rounded-xl p-1 flex flex-col items-center justify-center text-xs">
+                    <div onclick="openCalendarDetail('${dateStr}', ${day}, '${mNames[month]}', ${year})" class="aspect-square bg-slate-50 dark:bg-[#131d38] hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer rounded-xl p-1 flex flex-col items-center justify-center text-xs text-slate-800 dark:text-slate-200">
                         <span class="font-bold">${day}</span>
                     </div>
                 `;
@@ -2246,7 +2087,7 @@
             for (let day = 1; day <= totalDays; day++) {
                 const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                 grid.innerHTML += `
-                    <div onclick="openCalendarDetail('${dateStr}', ${day}, '${mNames[month]}', ${year})" class="aspect-square bg-[#131d38] hover:bg-slate-700 cursor-pointer rounded-xl p-2 flex flex-col items-center justify-center text-xs">
+                    <div onclick="openCalendarDetail('${dateStr}', ${day}, '${mNames[month]}', ${year})" class="aspect-square bg-slate-50 dark:bg-[#131d38] hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer rounded-xl p-2 flex flex-col items-center justify-center text-xs text-slate-800 dark:text-slate-200">
                         <span class="font-bold">${day}</span>
                     </div>
                 `;
@@ -2260,10 +2101,10 @@
             const body = document.getElementById('calDetailBody');
             body.innerHTML = '';
             if (ags.length === 0 && tsk.length === 0) {
-                body.innerHTML = `<div class="p-3 bg-[#131d38] rounded-xl text-center text-slate-400">Tidak ada agenda atau tugas pada tanggal ini.</div>`;
+                body.innerHTML = `<div class="p-3 bg-slate-100 dark:bg-[#131d38] rounded-xl text-center text-slate-500 dark:text-slate-400">Tidak ada agenda atau tugas pada tanggal ini.</div>`;
             } else {
-                ags.forEach(a => body.innerHTML += `<div class="p-2.5 bg-pink-950/40 rounded-xl border border-pink-800/40"><b>Agenda:</b> ${a.nama} (${a.jam})</div>`);
-                tsk.forEach(t => body.innerHTML += `<div class="p-2.5 bg-amber-950/40 rounded-xl border border-amber-800/40"><b>Tugas:</b> ${t.nama}</div>`);
+                ags.forEach(a => body.innerHTML += `<div class="p-2.5 bg-pink-50 dark:bg-pink-950/40 rounded-xl border border-pink-200 dark:border-pink-800/40 text-slate-800 dark:text-slate-200"><b>Agenda:</b> ${a.nama} (${a.jam})</div>`);
+                tsk.forEach(t => body.innerHTML += `<div class="p-2.5 bg-amber-50 dark:bg-amber-950/40 rounded-xl border border-amber-200 dark:border-amber-800/40 text-slate-800 dark:text-slate-200"><b>Tugas:</b> ${t.nama}</div>`);
             }
             document.getElementById('modalCalendarDetail').classList.remove('hidden');
         }
@@ -2290,7 +2131,7 @@
             } else {
                 document.documentElement.classList.remove('dark');
                 document.documentElement.classList.add('light');
-                document.body.className = "bg-slate-100 text-slate-900 min-h-screen flex flex-col transition-colors duration-300";
+                document.body.className = "bg-slate-100 text-slate-800 min-h-screen flex flex-col transition-colors duration-300";
             }
         }
 
@@ -2303,7 +2144,7 @@
 
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.classList.remove('bg-gradient-to-r', 'from-violet-600', 'to-indigo-600', 'text-white', 'shadow-sm');
-                btn.classList.add('text-slate-400');
+                btn.classList.add('text-slate-500', 'dark:text-slate-400');
                 const txt = btn.querySelector('.nav-text');
                 if (txt) {
                     txt.classList.remove('opacity-100', 'max-w-[120px]');
@@ -2314,7 +2155,7 @@
             const activeBtn = document.getElementById(`nav-${tabId}`);
             if (activeBtn) {
                 activeBtn.classList.add('bg-gradient-to-r', 'from-violet-600', 'to-indigo-600', 'text-white', 'shadow-sm');
-                activeBtn.classList.remove('text-slate-400');
+                activeBtn.classList.remove('text-slate-500', 'dark:text-slate-400');
                 const activeTxt = activeBtn.querySelector('.nav-text');
                 if (activeTxt) {
                     activeTxt.classList.remove('max-w-0', 'opacity-0', 'overflow-hidden');
@@ -2333,7 +2174,6 @@
                     document.getElementById('realtimeClock').innerText = `${hh}.${mm}.${ss} WIB`;
                 }
 
-                // Cek pengingat waktu nyata & hitung mundur
                 updateRealtimeAlarmAndCountdown(now);
             }, 1000);
         }
@@ -2343,7 +2183,6 @@
             const titleEl = document.getElementById('nextEventTitle');
             const subEl = document.getElementById('nextEventSub');
 
-            // Ambil semua agenda hari ini & tugas dengan deadline terdekat
             const todayStr = now.toISOString().split('T')[0];
             const todayAgendas = appState.agendas.filter(a => a.tanggal === todayStr && a.status === 'Belum Terlaksana');
             
@@ -2354,12 +2193,10 @@
                 return;
             }
 
-            // Cari agenda terdekat berdasarkan jam
             let nextAg = todayAgendas[0];
             if (titleEl) titleEl.innerText = nextAg.nama;
             if (subEl) subEl.innerText = `Lokasi: ${nextAg.lokasi} (${nextAg.jam} WIB)`;
 
-            // Hitung selisih waktu
             const [targetHour, targetMinute] = nextAg.jam.split(':').map(Number);
             const targetDate = new Date(now);
             targetDate.setHours(targetHour || 0, targetMinute || 0, 0, 0);
@@ -2378,9 +2215,9 @@
 
         function openGoogleAccountChooser() {
             const list = document.getElementById('googleAccountsList');
-            list.innerHTML = appState.savedAccounts.length === 0 ? '<div class="p-2 text-slate-400 text-center">Belum ada akun. Masukkan email di bawah.</div>' : '';
+            list.innerHTML = appState.savedAccounts.length === 0 ? '<div class="p-2 text-slate-500 dark:text-slate-400 text-center">Belum ada akun. Masukkan email di bawah.</div>' : '';
             appState.savedAccounts.forEach(acc => {
-                list.innerHTML += `<button onclick="selectAccount('${acc.email}')" class="w-full p-2 bg-[#131d38] hover:bg-slate-800 rounded-xl text-left font-medium">${acc.name} (${acc.email})</button>`;
+                list.innerHTML += `<button onclick="selectAccount('${acc.email}')" class="w-full p-2 bg-slate-50 dark:bg-[#131d38] hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl text-left font-medium text-slate-800 dark:text-slate-200">${acc.name} (${acc.email})</button>`;
             });
             document.getElementById('modalGoogleChooser').classList.remove('hidden');
         }
